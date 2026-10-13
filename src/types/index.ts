@@ -7,6 +7,8 @@ export interface ProductItem {
   shortDesc: string;
   fullDesc: string;
   image: string;
+  unitPrice?: string;
+  wholesaleCondition?: string;
   priceNote: string;
   features: string[];
   minQuantity: string;

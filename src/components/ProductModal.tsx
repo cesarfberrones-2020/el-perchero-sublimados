@@ -61,23 +61,36 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                 <h2 id="modal-title" className="text-2xl font-bold text-white mt-1">
                   {product.name}
                 </h2>
-                <p className="text-sm font-semibold text-rose-400 mt-1">
-                  {product.priceNote}
-                </p>
+              </div>
+
+              {/* Price & Wholesale Block */}
+              <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[11px] uppercase tracking-wider font-bold text-slate-400">
+                    Precio por unidad:
+                  </span>
+                  <span className="text-sm font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-amber-300">
+                    {product.unitPrice || product.priceNote}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-800/80 text-xs">
+                  <span className="text-cyan-400 font-semibold flex items-center gap-1.5">
+                    <Tag className="w-3.5 h-3.5" />
+                    Por mayor:
+                  </span>
+                  <span className="text-slate-200 font-bold">
+                    {product.wholesaleCondition || 'A partir de 1 docena (12 unidades)'}
+                  </span>
+                </div>
               </div>
 
               <p className="text-sm text-slate-300 leading-relaxed">
                 {product.fullDesc}
               </p>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs text-slate-300 space-y-1.5">
-                <div className="flex items-center gap-2 text-cyan-300 font-semibold">
-                  <Tag className="w-3.5 h-3.5" />
-                  <span>Pedido Mínimo & Escala:</span>
-                </div>
-                <p>{product.minQuantity}</p>
-                <p className="text-slate-400 pt-1">
-                  <strong>Ideal para:</strong> {product.popularFor}
+              <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-300">
+                <p className="text-slate-400">
+                  <strong className="text-slate-200">Ideal para:</strong> {product.popularFor}
                 </p>
               </div>
 

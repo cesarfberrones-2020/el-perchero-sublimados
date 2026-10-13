@@ -143,13 +143,25 @@ export const ProductsGrid: React.FC<ProductsGridProps> = ({
 
                 {/* Bottom Meta & CTAs */}
                 <div className="pt-4 border-t border-slate-800/80 space-y-4">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-400 font-medium">
-                      {product.minQuantity}
-                    </span>
-                    <span className="text-rose-400 font-bold">
-                      {product.priceNote.split('/')[0]}
-                    </span>
+                  {/* Structured Price & Minimum Quantity Box */}
+                  <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[11px] uppercase tracking-wider font-bold text-slate-400">
+                        Precio por unidad:
+                      </span>
+                      <span className="text-sm font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-amber-300">
+                        {product.unitPrice || product.priceNote}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-800/80 text-xs">
+                      <span className="text-cyan-400 font-semibold flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                        Por mayor:
+                      </span>
+                      <span className="text-slate-200 font-bold">
+                        {product.wholesaleCondition || 'A partir de 1 docena (12 unidades)'}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
