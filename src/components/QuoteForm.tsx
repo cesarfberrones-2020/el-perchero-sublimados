@@ -18,23 +18,29 @@ import type { QuoteFormData } from '../types';
 interface QuoteFormProps {
   selectedProduct?: string;
   onClearSelectedProduct?: () => void;
+  uploadedDesign?: { fileName: string; previewUrl: string };
+  onOpenPrivacy?: () => void;
 }
 
 export const QuoteForm: React.FC<QuoteFormProps> = ({
   selectedProduct = '',
   onClearSelectedProduct,
+  uploadedDesign,
+  onOpenPrivacy,
 }) => {
   const [formData, setFormData] = useState<QuoteFormData>({
     fullName: '',
     phone: '',
     email: '',
-    productType: selectedProduct || 'Camisetas & Joggers (Streetwear)',
-    quantity: '1-10 unidades (Personal / Muestra)',
+    productType: selectedProduct || 'Gorras Personalizadas ($5.00 x mayor desde la docena)',
+    quantity: '1 Docena (12 unidades - Precio al por mayor)',
     specifications: '',
     hasFile: false,
     fileName: '',
   });
 
+  const [filePreviewUrl, setFilePreviewUrl] = useState<string>('');
+  const [privacyAccepted, setPrivacyAccepted] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -46,20 +52,34 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
     }
   }, [selectedProduct]);
 
+  // Sync file uploaded from Process section (Step 01)
+  React.useEffect(() => {
+    if (uploadedDesign && uploadedDesign.fileName) {
+      setFormData((prev) => ({
+        ...prev,
+        hasFile: true,
+        fileName: uploadedDesign.fileName,
+      }));
+      setFilePreviewUrl(uploadedDesign.previewUrl || '');
+    }
+  }, [uploadedDesign]);
+
   const productOptions = [
-    'Camisetas & Joggers (Streetwear y Alta Pinta)',
-    'Gorras Personalizadas (Trucker / Snapback)',
-    'Tazas Creativas & Termos Metálicos',
-    'Artículos de Sublimación Corporativa / Merch',
-    'Paquete Mixto / Múltiples Productos',
-    'Otro producto personalizado'
+    'Gorras Personalizadas ($5.00 x mayor desde la docena)',
+    'Camisetas Personalizadas (Desde $10.00 x mayor desde la docena)',
+    'Hoodies Personalizados (Desde $15.00 x mayor desde la docena)',
+    'Camisetas, Hoodies & Joggers (Streetwear y Alta Pinta)',
+    'Tazas Creativas (Desde $3.50 x mayor desde la docena)',
+    'Termos Metálicos (Desde $10.00 x mayor desde la docena)',
+    'Artículos de Sublimación Corporativa (Precio por interno)',
+    'Paquete Mixto / Múltiples Productos (Desde 1 docena)'
   ];
 
   const quantityOptions = [
-    '1 - 10 unidades (Uso personal / Muestra / Regalo)',
-    '11 - 50 unidades (Pequeña escala / Lanzamiento de marca)',
-    '51 - 200 unidades (Evento / Dotación de equipo)',
-    '+200 unidades (Gran volumen / Distribución al por mayor)'
+    '1 Docena (12 unidades - Precio al por mayor)',
+    '2 a 4 Docenas (24 - 48 unidades - Marca / Negocio)',
+    '5 a 10 Docenas (60 - 120 unidades - Evento / Empresa)',
+    '+10 Docenas (+120 unidades - Gran volumen)'
   ];
 
   const handleInputChange = (
@@ -73,6 +93,11 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      if (file.type.startsWith('image/')) {
+        setFilePreviewUrl(URL.createObjectURL(file));
+      } else {
+        setFilePreviewUrl('');
+      }
       setFormData((prev) => ({
         ...prev,
         hasFile: true,
@@ -82,6 +107,7 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
   };
 
   const removeFile = () => {
+    setFilePreviewUrl('');
     setFormData((prev) => ({
       ...prev,
       hasFile: false,
@@ -94,6 +120,11 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
 
     if (!formData.fullName.trim() || !formData.phone.trim()) {
       setErrorMessage('Por favor ingresa tu nombre y número de WhatsApp para poder contactarte.');
+      return;
+    }
+
+    if (!privacyAccepted) {
+      setErrorMessage('Por favor acepta la Política de Privacidad y Protección de Datos Personales para continuar.');
       return;
     }
 
@@ -131,24 +162,20 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
     });
   };
 
-  // WhatsApp instant generator
+  // WhatsApp instant generator to 0990260253 (593990260253)
   const handleWhatsAppDirect = () => {
-    if (!formData.fullName.trim() || !formData.phone.trim()) {
-      setErrorMessage('Por favor escribe tu nombre y teléfono antes de abrir WhatsApp.');
-      return;
-    }
-
-    const message = `¡Hola El Perchero Sublimados! 👋 Mi nombre es ${formData.fullName}.
-Quisiera cotizar:
+    const clientName = formData.fullName.trim() ? `Mi nombre es ${formData.fullName}.` : '';
+    const message = `¡Hola El Perchero Sublimados! 👋 ${clientName}
+Quisiera cotizar al por mayor:
 📌 Producto: ${formData.productType}
 📦 Cantidad: ${formData.quantity}
 💬 Detalles: ${formData.specifications || 'Deseo asesoría para personalizar mi diseño'}
-${formData.hasFile ? `📁 Adjuntaré mi archivo: ${formData.fileName}` : ''}
+${formData.hasFile ? `📁 Tengo listo mi archivo/diseño: ${formData.fileName}` : ''}
 
 Quedo atento a su respuesta. ¡Gracias!`;
 
     const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/573001234567?text=${encoded}`, '_blank');
+    window.open(`https://wa.me/593990260253?text=${encoded}`, '_blank');
   };
 
   return (
@@ -173,7 +200,7 @@ Quedo atento a su respuesta. ¡Gracias!`;
           </h2>
 
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Dinos qué tienes en mente. Te enviamos presupuesto formal y tu primera <strong>maqueta digital gratuita</strong> en tiempo récord.
+            Dinos qué tienes en mente. Te enviamos presupuesto formal al por mayor desde la docena y tu primera <strong>maqueta digital gratuita</strong> en tiempo récord.
           </p>
         </div>
 
@@ -274,7 +301,7 @@ Quedo atento a su respuesta. ¡Gracias!`;
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    placeholder="Ej. +57 300 123 4567"
+                    placeholder="Ej. 0990260253"
                     required
                     autoComplete="tel"
                     className="w-full min-h-[48px] px-4 rounded-xl bg-slate-900/90 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"
@@ -360,47 +387,59 @@ Quedo atento a su respuesta. ¡Gracias!`;
                   rows={3}
                   value={formData.specifications}
                   onChange={handleInputChange}
-                  placeholder="Ej. Quiero 30 camisetas oversize negras con un estampado full color en la espalda y logo pequeño en el pecho..."
+                  placeholder="Ej. Quiero 2 docenas de camisetas oversize negras con estampado full color en la espalda y 1 docena de gorras..."
                   className="w-full p-4 rounded-xl bg-slate-900/90 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"
                 />
               </div>
 
-              {/* Simulated File Upload */}
+              {/* Functional File Upload with Image Preview */}
               <div>
                 <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
-                  Adjunta tu logo o boceto (Opcional)
+                  Sube tu Logo, Foto o Diseño (Opcional)
                 </label>
                 
                 {formData.hasFile ? (
-                  <div className="p-3.5 rounded-xl bg-slate-900 border border-cyan-500/40 flex items-center justify-between text-xs text-white">
-                    <div className="flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-cyan-400" />
-                      <span className="font-semibold">{formData.fileName}</span>
-                      <span className="text-slate-400">(Listo para adjuntar)</span>
+                  <div className="p-4 rounded-2xl bg-slate-900 border border-cyan-500/50 flex items-center justify-between gap-4 text-xs text-white shadow-lg">
+                    <div className="flex items-center gap-3 min-w-0">
+                      {filePreviewUrl ? (
+                        <img
+                          src={filePreviewUrl}
+                          alt="Vista previa de tu logo o diseño"
+                          className="w-16 h-16 rounded-xl object-contain bg-slate-950 border border-slate-700 p-1 flex-shrink-0"
+                        />
+                      ) : (
+                        <FileText className="w-8 h-8 text-cyan-400 flex-shrink-0" />
+                      )}
+                      <div className="min-w-0">
+                        <span className="font-bold text-sm block truncate">{formData.fileName}</span>
+                        <span className="text-emerald-400 text-[11px] font-medium block mt-0.5">
+                          ✓ Tu diseño está cargado y listo para cotizar
+                        </span>
+                      </div>
                     </div>
                     <button
                       type="button"
                       onClick={removeFile}
-                      className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
-                      title="Eliminar archivo"
+                      className="p-2 rounded-xl bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-colors"
+                      title="Eliminar o cambiar archivo"
                     >
                       <X className="w-4 h-4" />
                     </button>
                   </div>
                 ) : (
-                  <label className="border-2 border-dashed border-slate-700 hover:border-cyan-500/60 rounded-2xl p-5 flex flex-col items-center justify-center cursor-pointer bg-slate-900/40 hover:bg-slate-900/80 transition-all group">
+                  <label className="border-2 border-dashed border-cyan-500/50 hover:border-rose-400 rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer bg-slate-900/60 hover:bg-slate-900 transition-all group">
                     <input
                       type="file"
-                      accept=".png,.jpg,.jpeg,.pdf,.ai,.psd,.svg"
+                      accept="image/*,.png,.jpg,.jpeg,.webp,.pdf,.ai,.psd,.svg"
                       onChange={handleFileUpload}
                       className="hidden"
                     />
-                    <UploadCloud className="w-7 h-7 text-slate-400 group-hover:text-cyan-400 transition-colors mb-2" />
-                    <span className="text-xs text-slate-300 font-semibold text-center">
-                      Haz clic aquí para subir tu archivo o arrástralo
+                    <UploadCloud className="w-8 h-8 text-cyan-400 group-hover:text-rose-400 transition-colors mb-2 animate-bounce" />
+                    <span className="text-xs sm:text-sm text-white font-bold text-center">
+                      Haz clic aquí para subir tu Logo, Foto o Diseño
                     </span>
-                    <span className="text-[11px] text-slate-500 mt-1">
-                      PNG, JPG, PDF, AI, SVG (Máx. 25MB)
+                    <span className="text-[11px] text-slate-400 mt-1 text-center">
+                      Soporta fotos desde tu galería, PNG, JPG, PDF, AI o SVG (Máx. 25MB)
                     </span>
                   </label>
                 )}
@@ -414,8 +453,33 @@ Quedo atento a su respuesta. ¡Gracias!`;
                 </div>
                 <div className="flex items-center gap-2 text-cyan-300">
                   <Clock className="w-4 h-4 flex-shrink-0" />
-                  <span>Respuesta récord en &lt; 30 min hábiles</span>
+                  <span>WhatsApp directo: 0990260253</span>
                 </div>
+              </div>
+
+              {/* LOPDP Privacy Consent Checkbox */}
+              <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  id="privacyConsent"
+                  checked={privacyAccepted}
+                  onChange={(e) => {
+                    setPrivacyAccepted(e.target.checked);
+                    setErrorMessage('');
+                  }}
+                  className="mt-1 w-4 h-4 accent-rose-500 rounded cursor-pointer flex-shrink-0"
+                />
+                <label htmlFor="privacyConsent" className="text-xs text-slate-300 leading-relaxed cursor-pointer">
+                  He leído y acepto la{' '}
+                  <button
+                    type="button"
+                    onClick={onOpenPrivacy}
+                    className="text-cyan-400 hover:text-cyan-300 underline font-semibold"
+                  >
+                    Política de Privacidad y Protección de Datos Personales (LOPDP - Ecuador)
+                  </button>
+                  . Autorizo a <strong>El Perchero Sublimados</strong> a utilizar mis datos de contacto y archivos adjuntos exclusivamente para elaborar mi cotización y maqueta digital.
+                </label>
               </div>
 
               {/* Action Buttons */}
@@ -438,11 +502,11 @@ Quedo atento a su respuesta. ¡Gracias!`;
                 <button
                   type="button"
                   onClick={handleWhatsAppDirect}
-                  className="w-full sm:w-1/3 py-4 px-4 rounded-xl font-semibold text-sm text-emerald-400 hover:text-white bg-emerald-500/10 hover:bg-emerald-600 border border-emerald-500/30 flex items-center justify-center gap-2 transition-all"
-                  title="Enviar datos directo por WhatsApp"
+                  className="w-full sm:w-1/3 py-4 px-4 rounded-xl font-semibold text-sm text-emerald-400 hover:text-white bg-emerald-500/15 hover:bg-emerald-600 border border-emerald-500/40 flex items-center justify-center gap-2 transition-all"
+                  title="Enviar datos directo por WhatsApp al 0990260253"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  <span>Cotizar x WhatsApp</span>
+                  <span>WhatsApp: 0990260253</span>
                 </button>
               </div>
 

@@ -11,12 +11,27 @@ import { FAQ } from './components/FAQ';
 import { Footer } from './components/Footer';
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { ApifyIntegrationModal } from './components/ApifyIntegrationModal';
+import { LegalModal, type LegalTab } from './components/LegalModal';
+import { CookieBanner } from './components/CookieBanner';
 import type { ProductItem } from './types';
 
 export function App() {
   const [selectedProductForModal, setSelectedProductForModal] = useState<ProductItem | null>(null);
   const [selectedProductForQuote, setSelectedProductForQuote] = useState<string>('');
+  const [uploadedDesign, setUploadedDesign] = useState<{ fileName: string; previewUrl: string }>({
+    fileName: '',
+    previewUrl: '',
+  });
   const [isApifyModalOpen, setIsApifyModalOpen] = useState<boolean>(false);
+  const [legalModalState, setLegalModalState] = useState<{ isOpen: boolean; tab: LegalTab }>({
+    isOpen: false,
+    tab: 'privacy',
+  });
+  const [forceCookieSettings, setForceCookieSettings] = useState<boolean>(false);
+
+  const openLegalModal = (tab: LegalTab) => {
+    setLegalModalState({ isOpen: true, tab });
+  };
 
   const scrollToQuote = (productName?: string) => {
     if (productName) {
@@ -57,7 +72,10 @@ export function App() {
         />
 
         {/* How We Work (3 Steps Process) */}
-        <Process onQuoteClick={() => scrollToQuote()} />
+        <Process
+          onQuoteClick={() => scrollToQuote()}
+          onFileUploaded={(data) => setUploadedDesign(data)}
+        />
 
         {/* Differentials / Value Proposition */}
         <Differentials />
@@ -69,6 +87,8 @@ export function App() {
         <QuoteForm
           selectedProduct={selectedProductForQuote}
           onClearSelectedProduct={() => setSelectedProductForQuote('')}
+          uploadedDesign={uploadedDesign}
+          onOpenPrivacy={() => openLegalModal('privacy')}
         />
 
         {/* FAQs */}
@@ -76,10 +96,28 @@ export function App() {
       </main>
 
       {/* Footer */}
-      <Footer />
+      <Footer
+        onOpenLegal={(tab) => openLegalModal(tab)}
+        onOpenCookieSettings={() => setForceCookieSettings(true)}
+      />
 
       {/* Floating Instant WhatsApp Button */}
       <FloatingWhatsApp />
+
+      {/* Cookie Consent Banner (LOPDP Ecuador) */}
+      <CookieBanner
+        onOpenLegal={(tab) => openLegalModal(tab)}
+        forceShowSettings={forceCookieSettings}
+        onCloseSettings={() => setForceCookieSettings(false)}
+      />
+
+      {/* Legal, Privacy & Cookies Modal */}
+      <LegalModal
+        isOpen={legalModalState.isOpen}
+        initialTab={legalModalState.tab}
+        onClose={() => setLegalModalState((prev) => ({ ...prev, isOpen: false }))}
+        onOpenCookieSettings={() => setForceCookieSettings(true)}
+      />
 
       {/* Product Detail Modal */}
       <ProductModal

@@ -1,14 +1,68 @@
-import React, { useState } from 'react';
-import { UploadCloud, Laptop, Truck, CheckCircle2, ShieldCheck, Sparkles } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { UploadCloud, Laptop, Truck, CheckCircle2, ShieldCheck, Sparkles, MessageCircle, FileText, X, Image as ImageIcon } from 'lucide-react';
 import { PROCESS_STEPS } from '../data/content';
 
-export const Process: React.FC<{ onQuoteClick: () => void }> = ({ onQuoteClick }) => {
+interface ProcessProps {
+  onQuoteClick: () => void;
+  onFileUploaded?: (fileData: { fileName: string; previewUrl: string }) => void;
+}
+
+export const Process: React.FC<ProcessProps> = ({ onQuoteClick, onFileUploaded }) => {
   const [activeStep, setActiveStep] = useState<number>(0);
+  const [uploadedFileName, setUploadedFileName] = useState<string>('');
+  const [previewUrl, setPreviewUrl] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const icons = [UploadCloud, Laptop, Truck];
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setUploadedFileName(file.name);
+
+      let url = '';
+      if (file.type.startsWith('image/')) {
+        url = URL.createObjectURL(file);
+        setPreviewUrl(url);
+      } else {
+        setPreviewUrl('');
+      }
+
+      if (onFileUploaded) {
+        onFileUploaded({ fileName: file.name, previewUrl: url });
+      }
+      setActiveStep(0);
+    }
+  };
+
+  const clearUploadedFile = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setUploadedFileName('');
+    setPreviewUrl('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    if (onFileUploaded) {
+      onFileUploaded({ fileName: '', previewUrl: '' });
+    }
+  };
+
+  const triggerFileSelect = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    fileInputRef.current?.click();
+  };
+
   return (
     <section id="proceso" className="py-20 md:py-28 relative scroll-mt-20 bg-slate-950/60 border-y border-slate-900">
+      {/* Hidden File Input for Step 01 */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*,.png,.jpg,.jpeg,.webp,.svg,.pdf,.ai,.psd"
+        onChange={handleFileChange}
+        className="hidden"
+      />
+
       {/* Background glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-rose-500/5 rounded-full blur-[140px] pointer-events-none -z-10" />
 
@@ -29,7 +83,7 @@ export const Process: React.FC<{ onQuoteClick: () => void }> = ({ onQuoteClick }
           </h2>
 
           <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
-            De tu idea o boceto al producto terminado en tus manos en solo 3 sencillos pasos. Sin tecnicismos aburridos y con asesoría continua en cada etapa.
+            De tu idea o boceto al producto terminado en tus manos en solo 3 sencillos pasos. ¡Sube tu logo o foto directamente en el <strong>Paso 01</strong>!
           </p>
         </div>
 
@@ -59,15 +113,24 @@ export const Process: React.FC<{ onQuoteClick: () => void }> = ({ onQuoteClick }
                     <span className="text-4xl font-extrabold font-heading text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-cyan-400 opacity-80">
                       {step.number}
                     </span>
-                    <div
-                      className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors ${
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        if (idx === 0) {
+                          triggerFileSelect(e);
+                        } else {
+                          setActiveStep(idx);
+                        }
+                      }}
+                      title={idx === 0 ? 'Haz clic para subir tu logo, foto o diseño' : step.title}
+                      className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
                         isActive
-                          ? 'bg-gradient-to-br from-rose-500 to-cyan-500 text-white shadow-lg'
-                          : 'bg-slate-900 border border-slate-700 text-cyan-400'
+                          ? 'bg-gradient-to-br from-rose-500 to-cyan-500 text-white shadow-lg hover:scale-105'
+                          : 'bg-slate-900 border border-slate-700 text-cyan-400 hover:border-cyan-400 hover:scale-105'
                       }`}
                     >
                       <IconComponent className="w-7 h-7" />
-                    </div>
+                    </button>
                   </div>
 
                   {/* Title & Subtitle */}
@@ -81,9 +144,116 @@ export const Process: React.FC<{ onQuoteClick: () => void }> = ({ onQuoteClick }
                   </div>
 
                   {/* Description */}
-                  <p className="text-sm text-slate-300 leading-relaxed mb-5">
+                  <p className="text-sm text-slate-300 leading-relaxed mb-4">
                     {step.description}
                   </p>
+
+                  {/* Interactive Upload Box inside Step 01 */}
+                  {idx === 0 && (
+                    <div className="mb-5" onClick={(e) => e.stopPropagation()}>
+                      {uploadedFileName ? (
+                        <div className="p-3.5 rounded-2xl bg-slate-900/95 border border-cyan-500/50 space-y-3">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2 min-w-0">
+                              {previewUrl ? (
+                                <img
+                                  src={previewUrl}
+                                  alt="Vista previa de tu diseño"
+                                  className="w-12 h-12 rounded-lg object-contain bg-slate-950 border border-slate-700 flex-shrink-0"
+                                />
+                              ) : (
+                                <FileText className="w-8 h-8 text-cyan-400 flex-shrink-0" />
+                              )}
+                              <div className="min-w-0">
+                                <p className="text-xs font-bold text-white truncate">
+                                  {uploadedFileName}
+                                </p>
+                                <p className="text-[11px] text-emerald-400 font-medium">
+                                  ✓ Archivo cargado con éxito
+                                </p>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={clearUploadedFile}
+                              className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-colors"
+                              title="Cambiar archivo"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-1 gap-2 pt-1">
+                            <button
+                              type="button"
+                              onClick={onQuoteClick}
+                              className="w-full py-2 px-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-rose-500 to-cyan-500 hover:from-rose-600 hover:to-cyan-600 shadow-md flex items-center justify-center gap-1.5 transition-all"
+                            >
+                              <Sparkles className="w-3.5 h-3.5" />
+                              <span>Cotizar con este diseño</span>
+                            </button>
+                            <a
+                              href={`https://wa.me/593990260253?text=${encodeURIComponent(
+                                `¡Hola El Perchero Sublimados! 👋 Ya cargué mi diseño (${uploadedFileName}) en la web y quiero cotizar al por mayor.`
+                              )}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-full py-2 px-3 rounded-xl text-xs font-semibold text-emerald-300 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 flex items-center justify-center gap-1.5 transition-all"
+                            >
+                              <MessageCircle className="w-3.5 h-3.5" />
+                              <span>Enviar por WhatsApp (0990260253)</span>
+                            </a>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <button
+                            type="button"
+                            onClick={triggerFileSelect}
+                            className="w-full py-3 px-4 rounded-2xl border-2 border-dashed border-cyan-500/50 hover:border-rose-400 bg-slate-900/80 hover:bg-slate-900 text-white text-xs font-bold flex flex-col items-center justify-center gap-1.5 transition-all group shadow-inner"
+                          >
+                            <div className="flex items-center gap-2 text-cyan-300 group-hover:text-rose-300">
+                              <UploadCloud className="w-5 h-5 animate-bounce" />
+                              <span>Haz clic aquí para subir tu Logo, Foto o Diseño</span>
+                            </div>
+                            <span className="text-[10px] text-slate-400 font-normal">
+                              Soporta PNG, JPG, PDF, AI, SVG o fotos desde tu celular/PC
+                            </span>
+                          </button>
+
+                          <a
+                            href="https://wa.me/593990260253?text=Hola%20El%20Perchero%20Sublimados!%20Quiero%20enviarles%20mi%20logo%20o%20idea%20para%20cotizar"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full py-2 px-3 rounded-xl text-xs font-semibold text-emerald-400 hover:text-white bg-emerald-500/10 hover:bg-emerald-600 border border-emerald-500/30 flex items-center justify-center gap-1.5 transition-all"
+                          >
+                            <MessageCircle className="w-3.5 h-3.5" />
+                            <span>O envíalo directo al WhatsApp: 0990260253</span>
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Interactive Preview inside Step 02 if user uploaded an image */}
+                  {idx === 1 && previewUrl && (
+                    <div className="mb-5 p-3 rounded-2xl bg-slate-900/90 border border-cyan-500/40 flex items-center gap-3">
+                      <img
+                        src={previewUrl}
+                        alt="Tu diseño en vista previa"
+                        className="w-14 h-14 rounded-xl object-contain bg-slate-950 border border-slate-700 p-1 flex-shrink-0"
+                      />
+                      <div className="text-xs">
+                        <p className="font-bold text-cyan-300 flex items-center gap-1">
+                          <ImageIcon className="w-3.5 h-3.5" />
+                          <span>Vista Previa Detectada</span>
+                        </p>
+                        <p className="text-slate-300 text-[11px] mt-0.5">
+                          Tu archivo <strong>{uploadedFileName}</strong> está listo para montaje digital.
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Highlights List */}
                   <div className="space-y-2 pt-2 border-t border-slate-800/80">
@@ -113,17 +283,17 @@ export const Process: React.FC<{ onQuoteClick: () => void }> = ({ onQuoteClick }
         <div className="mt-16 glass-panel rounded-3xl p-6 sm:p-10 border border-slate-800 relative overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
-            <div className="lg:col-span-5 relative rounded-2xl overflow-hidden aspect-square max-w-sm mx-auto bg-[#0a0d14] border border-slate-800 shadow-xl">
+            <div className="lg:col-span-5 relative rounded-2xl overflow-hidden aspect-[16/10] bg-slate-950 border border-slate-800 shadow-xl">
               <img
-                src="/images/logo-el-perchero.jpg"
-                alt="El Perchero Taller de Personalización - Prensa térmica y arte urbano"
-                className="w-full h-full object-contain"
+                src="images/workshop.jpg"
+                alt="Prensa térmica de sublimación en taller de El Perchero"
+                className="w-full h-full object-cover"
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
               <div className="absolute bottom-3 left-3 right-3 text-xs text-slate-200 bg-slate-950/80 backdrop-blur-md p-2 rounded-lg border border-white/10 flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>El Perchero - Taller de Personalización Oficial</span>
+                <span>Prensa de alta presión neumática y tintas industriales</span>
               </div>
             </div>
 
@@ -143,15 +313,22 @@ export const Process: React.FC<{ onQuoteClick: () => void }> = ({ onQuoteClick }
 
               <div className="pt-2 flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={onQuoteClick}
+                  type="button"
+                  onClick={triggerFileSelect}
                   className="px-6 py-3 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-rose-500 to-cyan-500 hover:from-rose-600 hover:to-cyan-600 shadow-lg shadow-rose-500/25 flex items-center justify-center gap-2"
                 >
-                  <span>Iniciar con el Paso 1: Enviar mi idea</span>
+                  <UploadCloud className="w-4 h-4" />
+                  <span>Subir mi Logo / Diseño Ahora</span>
                 </button>
-                <div className="flex items-center gap-3 text-xs text-slate-400 px-2">
-                  <div className="w-2 h-2 rounded-full bg-cyan-400" />
-                  <span>Respuesta promedio en menos de 30 minutos</span>
-                </div>
+                <a
+                  href="https://wa.me/593990260253?text=Hola%20El%20Perchero%20Sublimados!%20Quiero%20enviar%20mi%20dise%C3%B1o%20para%20cotizar"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-5 py-3 rounded-xl font-bold text-sm text-emerald-300 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 flex items-center justify-center gap-2 transition-all"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span>WhatsApp: 0990260253</span>
+                </a>
               </div>
             </div>
 

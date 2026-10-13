@@ -16,7 +16,7 @@ export const ProductsGrid: React.FC<ProductsGridProps> = ({
 
   const filterTabs = [
     { id: 'all', label: 'Todos los Productos' },
-    { id: 'streetwear', label: 'Camisetas & Joggers' },
+    { id: 'streetwear', label: 'Camisetas, Hoodies & Joggers' },
     { id: 'caps', label: 'Gorras Urbanas' },
     { id: 'mugs', label: 'Tazas & Termos' },
     { id: 'corporate', label: 'Merch Corporativo' },
@@ -78,11 +78,11 @@ export const ProductsGrid: React.FC<ProductsGridProps> = ({
               className="group glass-card rounded-3xl overflow-hidden border border-slate-800/80 hover:border-slate-700/80 transition-all duration-500 hover:-translate-y-1.5 flex flex-col justify-between shadow-xl shadow-black/40"
             >
               {/* Product Media Header */}
-              <div className="relative aspect-[4/3] overflow-hidden bg-[#0c0f16] flex items-center justify-center">
+              <div className="relative aspect-[16/10] overflow-hidden bg-slate-950">
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   loading="lazy"
                 />
                 

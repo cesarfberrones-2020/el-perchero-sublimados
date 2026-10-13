@@ -11,7 +11,14 @@ import {
   Heart 
 } from 'lucide-react';
 
-export const Footer: React.FC = () => {
+import type { LegalTab } from './LegalModal';
+
+interface FooterProps {
+  onOpenLegal?: (tab: LegalTab) => void;
+  onOpenCookieSettings?: () => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onOpenLegal, onOpenCookieSettings }) => {
   const [subscribed, setSubscribed] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
 
@@ -28,25 +35,30 @@ export const Footer: React.FC = () => {
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-rose-500/5 blur-3xl pointer-events-none" />
 
       {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
           
           {/* Brand Info & Mission (Col 1-4) */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 via-cyan-500 to-emerald-400 p-[2px] overflow-hidden">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 via-cyan-500 to-emerald-400 p-[2px] overflow-hidden shadow-lg shadow-cyan-500/20 flex-shrink-0">
                 <img
-                  src="/images/logo-el-perchero.jpg"
-                  alt="Logo El Perchero Taller de Personalización"
-                  className="w-full h-full object-cover rounded-[10px]"
+                  src="images/logo_2.png"
+                  alt="Logo El Perchero Sublimados"
+                  className="w-full h-full object-cover rounded-[14px] bg-[#080c14]"
                 />
               </div>
-              <span className="font-heading font-extrabold text-xl text-white">
-                El Perchero{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-cyan-400">
-                  Sublimados
+              <div className="flex flex-col">
+                <span className="font-heading font-extrabold text-xl text-white leading-tight">
+                  EL PERCHERO{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-cyan-400 block text-sm uppercase tracking-wider">
+                    Sublimados
+                  </span>
                 </span>
-              </span>
+                <span className="text-xs text-slate-400 font-medium">
+                  Taller de Personalización
+                </span>
+              </div>
             </div>
 
             <p className="text-slate-300 text-sm leading-relaxed">
@@ -80,11 +92,11 @@ export const Footer: React.FC = () => {
                 </svg>
               </a>
               <a
-                href="https://wa.me/573001234567"
+                href="https://wa.me/593990260253?text=Hola%20El%20Perchero%20Sublimados!%20Quisiera%20informaci%C3%B3n%20sobre%20sus%20productos"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-xl bg-slate-900 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-400 border border-slate-800 hover:border-emerald-500/40 flex items-center justify-center transition-all"
-                aria-label="WhatsApp de El Perchero Sublimados"
+                aria-label="WhatsApp de El Perchero Sublimados: 0990260253"
               >
                 <MessageCircle className="w-5 h-5" />
               </a>
@@ -99,22 +111,22 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2 text-sm">
               <li>
                 <a href="#productos" className="hover:text-cyan-300 transition-colors">
-                  Gorras Personalizadas
+                  Gorras Personalizadas ($5.00)
                 </a>
               </li>
               <li>
                 <a href="#productos" className="hover:text-cyan-300 transition-colors">
-                  Camisetas Streetwear
+                  Camisetas ($10) & Hoodies ($15)
                 </a>
               </li>
               <li>
                 <a href="#productos" className="hover:text-cyan-300 transition-colors">
-                  Tazas & Termos Metálicos
+                  Tazas ($3.50) & Termos ($10)
                 </a>
               </li>
               <li>
                 <a href="#productos" className="hover:text-cyan-300 transition-colors">
-                  Merch Corporativo B2B
+                  Merch Corporativo (Por interno)
                 </a>
               </li>
               <li>
@@ -137,7 +149,14 @@ export const Footer: React.FC = () => {
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-cyan-400 flex-shrink-0" />
-                <span>+593 98 765 4321</span>
+                <a
+                  href="https://wa.me/593990260253?text=Hola%20El%20Perchero%20Sublimados!%20Quisiera%20cotizar"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-emerald-400 font-semibold transition-colors"
+                >
+                  WhatsApp: 0990260253 (+593 99 026 0253)
+                </a>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-purple-400 flex-shrink-0" />
@@ -185,7 +204,7 @@ export const Footer: React.FC = () => {
                   </button>
                 </div>
                 <p className="text-[10px] text-slate-500">
-                  Cero spam. Solo ofertas y lanzamientos importantes.
+                  Cero spam. Tus datos están protegidos bajo la LOPDP del Ecuador.
                 </p>
               </form>
             )}
@@ -193,13 +212,48 @@ export const Footer: React.FC = () => {
 
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} <strong>El Perchero Sublimados</strong>. Todos los derechos reservados.</p>
+        {/* Bottom bar with Legal & Privacy Links */}
+        <div className="mt-12 pt-8 border-t border-slate-900 flex flex-col lg:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+          <p>© {new Date().getFullYear()} <strong>El Perchero Sublimados</strong> (Ecuador). Todos los derechos reservados.</p>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium text-slate-400">
+            <button
+              type="button"
+              onClick={() => onOpenLegal && onOpenLegal('privacy')}
+              className="hover:text-cyan-400 underline-offset-4 hover:underline transition-colors"
+            >
+              Política de Privacidad (LOPDP)
+            </button>
+            <span className="text-slate-700">•</span>
+            <button
+              type="button"
+              onClick={() => onOpenLegal && onOpenLegal('cookies')}
+              className="hover:text-cyan-400 underline-offset-4 hover:underline transition-colors"
+            >
+              Política de Cookies
+            </button>
+            <span className="text-slate-700">•</span>
+            <button
+              type="button"
+              onClick={() => onOpenLegal && onOpenLegal('terms')}
+              className="hover:text-cyan-400 underline-offset-4 hover:underline transition-colors"
+            >
+              Términos y Condiciones
+            </button>
+            <span className="text-slate-700">•</span>
+            <button
+              type="button"
+              onClick={() => onOpenCookieSettings && onOpenCookieSettings()}
+              className="hover:text-rose-400 underline-offset-4 hover:underline transition-colors"
+            >
+              Configurar Cookies
+            </button>
+          </div>
+
           <div className="flex items-center gap-2">
             <span>Hecho con</span>
             <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
-            <span>para marcas, empresas y mentes creativas</span>
+            <span>en Ecuador</span>
           </div>
         </div>
 

@@ -10,38 +10,38 @@ export const PRODUCTS: ProductItem[] = [
     badge: 'Top Ventas',
     shortDesc: 'Trucker caps con malla ventilada, snapbacks urbanas y dad hats con parches sublimados de ultra alta resolución.',
     fullDesc: 'Lleva tu marca o estilo urbano a la cabeza con nuestras gorras de confección premium. Utilizamos parches termosellados de sublimación HD que capturan hasta el más mínimo degradado y microdetalle con bordes reforzados y costuras de alta resistencia.',
-    image: '/images/perchero-gorras-hoodie.png',
-    priceNote: 'Desde $10 USD / Descuento especial por docena',
-    minQuantity: 'Desde 1 unidad (Precios por mayor desde 12 uds)',
+    image: 'images/caps.jpg',
+    priceNote: '$5.00 USD / Precio por mayor a partir de la docena',
+    minQuantity: 'Precio por mayor desde la docena (12 uds)',
     popularFor: 'Marcas streetwear, eventos deportivos, dotación de empresas, regalos personales y creadores de contenido.',
     features: [
+      'Precio al por mayor: $5.00 c/u a partir de la docena (12 unidades)',
       'Modelos Trucker clásica, Snapback plana y Curva estilo béisbol',
-      'Parches sublimados HD y bordados con el sello de El Perchero',
-      'Mallas respirables y broches ajustables de alta durabilidad',
+      'Parches sublimados HD con textura nítida y colores Pantone fieles',
       'Resistentes al sudor, sol y lavados frecuentes sin deformarse'
     ],
     colorsAvailable: ['Negro Intenso', 'Azul Marino', 'Verde Militar', 'Blanco/Negro', 'Camuflado Urbano']
   },
   {
     id: 'streetwear-camisetas-joggers',
-    name: 'Camisetas DTF, Hoodies & Alta Pinta',
+    name: 'Camisetas, Hoodies & Joggers (Streetwear y Alta Pinta)',
     category: 'streetwear',
-    categoryLabel: 'Streetwear & Alta Pinta',
-    tag: 'DTF & Sublimación',
+    categoryLabel: 'Ropa Streetwear',
+    tag: 'Alta Pinta & Tendencia',
     badge: 'Tendencia 2026',
-    shortDesc: 'Hoodies full-print urbanos, camisetas en DTF de alta definición y prendas exclusivas de Alta Pinta con acabados dorados.',
-    fullDesc: 'Diseñado para quienes buscan estética urbana y de gala con máximo impacto. Combinamos hoodies sublimados full-color, camisetas con tecnología DTF textil de ultra adherencia y sastrería personalizada de Alta Pinta con detalles exclusivos.',
-    image: '/images/perchero-right-apparel.png',
-    priceNote: 'Desde $18 USD / Tarifas preferenciales para marcas',
-    minQuantity: 'Desde 1 unidad (Producción para marcas desde 10 uds)',
-    popularFor: 'Lanzamientos de marcas independientes, artistas, outfits urbanos, eventos de gala y drops limitados.',
+    shortDesc: 'Camisetas desde $10.00 y Hoodies desde $15.00 al por mayor desde la docena. Corte Oversize, tacto cero y sublimación full-color.',
+    fullDesc: 'Diseñado para quienes buscan estética urbana de impacto en Ecuador. Nuestras camisetas, hoodies y joggers combinan cortes modernos (Boxy fit, Oversize y Regular) con técnicas de sublimación y estampado textil de alta definición: colores intensos y máxima durabilidad.',
+    image: 'images/streetwear.jpg',
+    priceNote: 'Camisetas desde $10.00 | Hoodies desde $15.00 / Precio por mayor a partir de la docena',
+    minQuantity: 'Precio por mayor desde la docena (12 uds)',
+    popularFor: 'Lanzamientos de marcas independientes, outfits urbanos, bandas, academias de baile y drops limitados.',
     features: [
-      'Algodón peinado de alto gramaje (220g+) y telas premium para hoodies',
-      'Estampado DTF y Sublimación HD que no se cuartea ni pierde color',
-      'Personalización de Alta Pinta con detalles dorados y acabados de autor',
-      'Garantía de resistencia: colores intensos lavado tras lavado'
+      'Camisetas desde $10.00 USD y Hoodies desde $15.00 USD al por mayor (desde 1 docena)',
+      'Algodón tacto suave peinado y telas premium de alto gramaje',
+      'Sublimación táctil "Tacto Cero" transpirable en toda la prenda o zonas localizadas',
+      'Garantía de resistencia: la tinta no se desgasta, no se cuartea ni pierde brillo'
     ],
-    colorsAvailable: ['Black Night', 'Gold Edition', 'Off-White', 'Charcoal Grey', 'Full Print Urbano']
+    colorsAvailable: ['Black Night', 'Off-White', 'Acid Wash', 'Charcoal Grey', 'Deep Forest']
   },
   {
     id: 'tazas-termos-creativos',
@@ -50,38 +50,38 @@ export const PRODUCTS: ProductItem[] = [
     categoryLabel: 'Tazas & Termos',
     tag: 'Regalos & Drinkware',
     badge: 'Favorito para Regalo',
-    shortDesc: 'Tazas de cerámica brillante de 11oz y 15oz, tazas mágicas termosensibles y vasos térmicos en acero inoxidable.',
-    fullDesc: 'La opción perfecta para regalos inolvidables, coleccionables o merchandising diario. Nuestras cerámicas cuentan con recubrimiento de polímero grado AAA para un brillo espejo y máxima definición, junto con termos de acero de doble pared.',
-    image: '/images/perchero-tazas-termos.png',
-    priceNote: 'Desde $6 USD / Descuentos a partir de 6 unidades',
-    minQuantity: 'Desde 1 unidad (Paquetes empresariales desde 24 uds)',
-    popularFor: 'Regalos personalizados, dotación de oficina, souvenirs, coleccionistas y eventos corporativos.',
+    shortDesc: 'Tazas desde $3.50 y Termos desde $10.00 al por mayor a partir de la docena. Cerámica brillante AAA, tazas mágicas y acero inoxidable.',
+    fullDesc: 'La opción perfecta para regalos inolvidables, celebraciones o merchandising diario. Nuestras cerámicas cuentan con recubrimiento de polímero grado AAA para un brillo espejo y máxima adherencia de tintas, aptas para microondas y lavavajillas.',
+    image: 'images/mugs.jpg',
+    priceNote: 'Tazas desde $3.50 | Termos desde $10.00 / Precio por mayor a partir de la docena',
+    minQuantity: 'Precio por mayor desde la docena (12 uds)',
+    popularFor: 'Regalos corporativos, dotación de oficina, cafeterías, souvenirs y eventos especiales.',
     features: [
-      'Cerámica grado AAA de 11oz y 15oz con acabado ultrabrillante',
-      'Tazas Mágicas: fondo negro que revela tu diseño al verter líquido caliente',
-      'Termos metálicos doble pared insulados al vacío (frío 24h / caliente 12h)',
+      'Tazas desde $3.50 USD y Termos desde $10.00 USD al por mayor (desde 1 docena)',
+      'Cerámica grado AAA de 11oz y 15oz con acabado ultrabrillante y Tazas Mágicas',
+      'Termos metálicos doble pared insulados al vacío (mantiene frío y calor)',
       'Impresión envolvente panorámica 360° con tintas fotográficas de alta densidad'
     ],
-    colorsAvailable: ['Blanco Puro', 'Taza Mágica Negra', 'Acero Inoxidable', 'Full Color']
+    colorsAvailable: ['Blanco Puro', 'Taza Mágica Negra', 'Acero Pulido', 'Gradiente Neón']
   },
   {
     id: 'sublimacion-corporativa',
-    name: 'Colección Completa & Merch Corporativo',
+    name: 'Artículos de Sublimación Corporativa',
     category: 'corporate',
     categoryLabel: 'Merch Corporativo',
     tag: 'Empresarial & Eventos',
-    badge: 'Solución Integral',
-    shortDesc: 'Paquetes completos de identidad visual: chompas, gorras, tazas, termos y camisetas corporativas para empresas y eventos.',
-    fullDesc: 'Haz que tu marca o evento destaque con nuestra línea integral de personalización. Producimos kits completos que combinan prendas textiles (hoodies, camisetas, gorras) con artículos promocionales (tazas, termos) manteniendo fidelidad total a tu logotipo.',
-    image: '/images/perchero-left-merch.png',
-    priceNote: 'Cotizaciones escalables según volumen y kit',
-    minQuantity: 'Desde 12 unidades (Grandes lotes disponibles)',
-    popularFor: 'Kits de bienvenida a nuevos empleados (Onboarding), ferias comerciales, congresos y regalos de fin de año.',
+    badge: 'Solución B2B',
+    shortDesc: 'Mousepads, lanyards institucionales, botellas deportivas, tote bags y kits empresariales. Cotización y precio por interno al por mayor desde la docena.',
+    fullDesc: 'Haz que tu marca destaque con material corporativo que tus clientes y colaboradores realmente querrán usar a diario. Ofrecemos precios al por mayor a partir de la docena con atención personalizada por interno según los artículos de tu kit.',
+    image: 'images/corporate.jpg',
+    priceNote: 'Precio por interno / Al por mayor desde la docena',
+    minQuantity: 'Precio por mayor desde la docena (12 uds)',
+    popularFor: 'Kits de bienvenida a nuevos empleados (Onboarding), ferias comerciales, congresos y regalos empresariales.',
     features: [
-      'Mousepads ergonómicos y Gamer XXL con base de caucho antideslizante y bordes cosidos',
-      'Cintas lanyard porta-carnet en satín brillante con mosquetón metálico de seguridad',
-      'Tote bags ecológicas de lona sublimada resistentes al peso',
-      'Empaque personalizado institucional y muestras físicas o digitales previas'
+      'Precio por interno: atención directa para armar tu paquete desde 1 docena (12 uds)',
+      'Mousepads ergonómicos, cintas lanyard porta-carnet en satín y tote bags',
+      'Acabados corporativos fieles a los colores de tu marca o empresa',
+      'Empaque personalizado institucional y muestra digital previa'
     ],
     colorsAvailable: ['Colores Corporativos según Pantone', 'Negro Mate', 'Blanco', 'Gris Grafito']
   }
@@ -153,11 +153,11 @@ export const DIFFERENTIALS: DifferentialItem[] = [
   },
   {
     id: 'precios',
-    title: 'Precios Competitivos y Mayoristas',
-    description: 'Excelente relación costo-beneficio tanto para piezas unitarias exclusivas como para pedidos por volumen con descuentos escalonados para negocios.',
+    title: 'Precios al Por Mayor desde la Docena',
+    description: 'Precios altamente competitivos en dólares ($ USD) a partir de la docena (12 unidades), ideales para marcas, eventos, emprendedores y empresas en todo el Ecuador.',
     icon: 'BadgePercent',
-    stat: 'Escalable',
-    statLabel: 'De 1 a +1,000 unidades'
+    stat: 'Desde 12 uds',
+    statLabel: 'Tarifa mayorista (Docena)'
   },
   {
     id: 'garantia',
@@ -183,9 +183,9 @@ export const TESTIMONIALS: TestimonialItem[] = [
     clientName: 'Mateo Restrepo',
     role: 'Fundador',
     companyOrBrand: 'RAW Streetwear Co.',
-    comment: 'Trabajar con El Perchero cambió por completo la percepción de mi marca. La tela pesada de las camisetas y la definición de los estampados oversize tienen nivel internacional. Ya vamos por el tercer drop con ellos.',
+    comment: 'Trabajar con El Perchero cambió por completo la percepción de mi marca. La tela pesada de las camisetas y hoodies junto con la definición de los estampados tienen nivel internacional. Ya vamos por el tercer drop con ellos.',
     rating: 5,
-    productPurchased: 'Camisetas Oversize Full Print',
+    productPurchased: 'Camisetas & Hoodies Streetwear',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
   },
   {
@@ -212,9 +212,9 @@ export const TESTIMONIALS: TestimonialItem[] = [
 
 export const FAQS: FaqItem[] = [
   {
-    question: '¿Cuál es la cantidad mínima que puedo pedir?',
-    answer: '¡Trabajamos desde 1 sola unidad para regalos y proyectos personales! Si requieres pedidos por volumen (a partir de 12 o 50 unidades), aplicamos descuentos escalonados muy atractivos para empresas y marcas.',
-    category: 'Pedidos'
+    question: '¿Cuáles son los precios al por mayor y desde cuántas unidades aplican?',
+    answer: 'Todos nuestros precios al por mayor están en dólares ($ USD) y aplican a partir de la docena (12 unidades): Gorras personalizadas $5.00, Camisetas desde $10.00, Hoodies desde $15.00, Tazas desde $3.50, Termos desde $10.00 y Artículos de Sublimación Corporativa con precio por interno.',
+    category: 'Precios'
   },
   {
     question: '¿En qué formatos debo enviar mi diseño o logo?',
@@ -228,12 +228,12 @@ export const FAQS: FaqItem[] = [
   },
   {
     question: '¿Cuánto tiempo tarda la producción y entrega?',
-    answer: 'Para pedidos unitarios o muestras, el tiempo estándar de producción es de 24 a 48 horas tras aprobar el mockup digital. Para producciones medianas y grandes, coordinamos un cronograma de 3 a 5 días hábiles con despacho express.',
+    answer: 'Tras aprobar el mockup digital, coordinamos la producción de tus docenas con entrega ágil entre 24 y 72 horas hábiles según el volumen del pedido.',
     category: 'Tiempos'
   },
   {
-    question: '¿Realizan envíos a nivel nacional?',
-    answer: 'Sí, despachamos con las mejores transportadoras a nivel nacional con empaque seguro y número de guía para que rastrees tu pedido en tiempo real hasta tu puerta.',
+    question: '¿Realizan envíos a todo el Ecuador?',
+    answer: 'Sí, despachamos a nivel local y a todas las provincias del Ecuador mediante Servientrega o transporte seguro con número de guía para seguimiento.',
     category: 'Envíos'
   }
 ];

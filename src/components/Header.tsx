@@ -51,17 +51,17 @@ export const Header: React.FC<HeaderProps> = ({ onQuoteClick, onApifyClick }) =>
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            {/* Logo */}
+            {/* Logo Oficial (Imagen 1) */}
             <a
               href="#"
               className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 rounded-lg p-1"
               aria-label="El Perchero Sublimados - Inicio"
             >
-              <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 via-cyan-500 to-emerald-400 p-[2px] transition-transform duration-300 group-hover:scale-105 shadow-md shadow-cyan-500/20 overflow-hidden">
+              <div className="relative w-11 h-11 rounded-full bg-gradient-to-br from-rose-500 via-purple-600 to-cyan-500 p-[2px] transition-transform duration-300 group-hover:scale-105 shadow-md shadow-rose-500/20 overflow-hidden flex-shrink-0">
                 <img
-                  src="/images/logo-el-perchero.jpg"
-                  alt="Logo El Perchero Taller de Personalización"
-                  className="w-full h-full object-cover rounded-[10px]"
+                  src="images/logo_1.jpg"
+                  alt="Logo El Perchero Sublimados"
+                  className="w-full h-full object-cover rounded-full bg-[#0b0f19]"
                 />
               </div>
               <div className="flex flex-col">
@@ -103,15 +103,15 @@ export const Header: React.FC<HeaderProps> = ({ onQuoteClick, onApifyClick }) =>
               </button>
 
               <a
-                href="https://wa.me/573001234567?text=Hola%20El%20Perchero%20Sublimados!%20Quisiera%20asesoría%20sobre%20personalización"
+                href="https://wa.me/593990260253?text=Hola%20El%20Perchero%20Sublimados!%20Quisiera%20asesor%C3%ADa%20sobre%20personalizaci%C3%B3n"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-2 rounded-lg border border-emerald-500/20 transition-all"
-                title="Atención directa por WhatsApp"
+                title="Atención directa por WhatsApp: 0990260253"
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
                 <PhoneCall className="w-3.5 h-3.5" />
-                <span>Asesoría en línea</span>
+                <span>WhatsApp: 0990260253</span>
               </a>
 
               <button
@@ -182,13 +182,13 @@ export const Header: React.FC<HeaderProps> = ({ onQuoteClick, onApifyClick }) =>
               </button>
 
               <a
-                href="https://wa.me/573001234567?text=Hola%20El%20Perchero%20Sublimados!%20Quisiera%20cotizar"
+                href="https://wa.me/593990260253?text=Hola%20El%20Perchero%20Sublimados!%20Quisiera%20cotizar"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-2.5 px-4 rounded-xl text-center font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center gap-2"
               >
                 <PhoneCall className="w-4 h-4" />
-                <span>WhatsApp Directo (+57 300 123 4567)</span>
+                <span>WhatsApp Directo: 0990260253</span>
               </a>
             </div>
           </div>
