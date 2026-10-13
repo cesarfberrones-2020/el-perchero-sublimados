@@ -123,33 +123,33 @@ export const Hero: React.FC<HeroProps> = ({ onQuoteClick, onExploreClick }) => {
 
           </div>
 
-          {/* Right Column: Visual Product Showcase with Floating Interactive Badges */}
+          {/* Right Column: Official Emblem Showcase with Floating Interactive Badges */}
           <div className="lg:col-span-5 relative">
             <div className="relative mx-auto max-w-md lg:max-w-none">
               
               {/* Glowing Frame Border */}
-              <div className="relative rounded-3xl p-1 bg-gradient-to-b from-rose-500/40 via-purple-500/20 to-cyan-500/40 shadow-2xl shadow-rose-500/20">
+              <div className="relative rounded-3xl p-1 bg-gradient-to-b from-amber-400/50 via-cyan-500/30 to-emerald-500/40 shadow-2xl shadow-cyan-500/20">
                 <div className="relative rounded-[22px] overflow-hidden bg-slate-950">
                   <img
-                    src="/images/hero.jpg"
-                    alt="Colección de productos sublimados El Perchero - Gorra, camiseta en perchero y tumbler"
-                    className="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-700 aspect-[16/10] sm:aspect-square"
+                    src="/images/logo-el-perchero.jpg"
+                    alt="Emblema Oficial El Perchero - Taller de Personalización"
+                    className="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-700 aspect-square"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#080c14] via-transparent to-transparent opacity-60" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#080c14]/80 via-transparent to-transparent" />
 
                   {/* Bottom caption in image */}
                   <div className="absolute bottom-4 left-4 right-4 p-3 rounded-xl bg-slate-900/90 backdrop-blur-md border border-white/10 flex items-center justify-between">
                     <div>
                       <p className="text-xs font-bold text-white flex items-center gap-1.5">
-                        <Flame className="w-3.5 h-3.5 text-rose-400" />
-                        Acabado Profesional Ultra HD
+                        <Flame className="w-3.5 h-3.5 text-amber-400" />
+                        El Perchero - Taller de Personalización
                       </p>
                       <p className="text-[11px] text-slate-400">
-                        Tintas de penetración molecular continua
+                        Sublimación, DTF, Streetwear & Alta Pinta
                       </p>
                     </div>
-                    <span className="text-[10px] font-bold px-2 py-1 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                      Garantía 100%
+                    <span className="text-[10px] font-bold px-2 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                      Sello Oficial
                     </span>
                   </div>
                 </div>
@@ -158,22 +158,22 @@ export const Hero: React.FC<HeroProps> = ({ onQuoteClick, onExploreClick }) => {
               {/* Floating Badge 1 - Top Right */}
               <div className="absolute -top-4 -right-2 sm:-right-4 px-3.5 py-2.5 rounded-2xl glass-panel shadow-xl shadow-black/50 border border-cyan-500/30 flex items-center gap-2.5 animate-float">
                 <div className="w-8 h-8 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-300 font-bold text-xs">
-                  HD
+                  DTF
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-white leading-tight">Tintas Premium</p>
+                  <p className="text-xs font-bold text-white leading-tight">Sublimación & DTF</p>
                   <p className="text-[10px] text-cyan-300">No se borran al lavar</p>
                 </div>
               </div>
 
               {/* Floating Badge 2 - Bottom Left */}
-              <div className="absolute -bottom-5 -left-2 sm:-left-6 px-4 py-2.5 rounded-2xl glass-panel shadow-xl shadow-black/50 border border-rose-500/30 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-rose-500/20 flex items-center justify-center text-rose-400">
+              <div className="absolute -bottom-5 -left-2 sm:-left-6 px-4 py-2.5 rounded-2xl glass-panel shadow-xl shadow-black/50 border border-amber-500/30 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400">
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-white leading-tight">Streetwear & Merch</p>
-                  <p className="text-[10px] text-slate-400">Corte urbano y corporativo</p>
+                  <p className="text-xs font-bold text-white leading-tight">Streetwear & Alta Pinta</p>
+                  <p className="text-[10px] text-slate-400">Diseños exclusivos a medida</p>
                 </div>
               </div>
 
@@ -181,6 +181,20 @@ export const Hero: React.FC<HeroProps> = ({ onQuoteClick, onExploreClick }) => {
           </div>
 
         </div>
+
+        {/* Full-Width Panoramic Official Showcase Banner */}
+        <div className="mt-16 pt-4">
+          <div className="relative rounded-3xl p-1 bg-gradient-to-r from-amber-500/40 via-cyan-500/40 to-amber-500/40 shadow-2xl shadow-black/70 overflow-hidden group">
+            <div className="relative rounded-[22px] overflow-hidden bg-[#0a0d14]">
+              <img
+                src="/images/banner-el-perchero.png"
+                alt="Banner Oficial El Perchero Taller de Personalización - Hoodies, Gorras, Tazas, Termos, DTF y Alta Pinta"
+                className="w-full h-auto object-contain group-hover:scale-[1.01] transition-transform duration-700"
+              />
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
   );

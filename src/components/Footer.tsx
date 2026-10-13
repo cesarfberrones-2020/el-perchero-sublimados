@@ -34,20 +34,16 @@ export const Footer: React.FC = () => {
           {/* Brand Info & Mission (Col 1-4) */}
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 via-purple-600 to-cyan-500 p-[2px]">
-                <div className="w-full h-full bg-[#0b0f19] rounded-[10px] flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 4c1.1 0 2 .9 2 2 0 .8-.5 1.5-1.2 1.8L12 8" />
-                    <path d="M12 8L3 14c-.6.4-.3 1.3.4 1.3h17.2c.7 0 1-.9.4-1.3L12 8z" />
-                    <circle cx="8" cy="17" r="1" fill="#06b6d4" />
-                    <circle cx="12" cy="17" r="1" fill="#f43f5e" />
-                    <circle cx="16" cy="17" r="1" fill="#f59e0b" />
-                  </svg>
-                </div>
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 via-cyan-500 to-emerald-400 p-[2px] overflow-hidden">
+                <img
+                  src="/images/logo-el-perchero.jpg"
+                  alt="Logo El Perchero Taller de Personalización"
+                  className="w-full h-full object-cover rounded-[10px]"
+                />
               </div>
               <span className="font-heading font-extrabold text-xl text-white">
                 El Perchero{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-cyan-400">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-cyan-400">
                   Sublimados
                 </span>
               </span>
@@ -137,15 +133,15 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2.5 text-xs text-slate-300">
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
-                <span>Cra. 15 # 85-32, Zona Creativa Textil, Bogotá D.C., Colombia</span>
+                <span>El Perchero - Taller de Personalización (@el_perchero_personalizados)</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-cyan-400 flex-shrink-0" />
-                <span>(+57) 300 123 4567 / (601) 890 1234</span>
+                <span>+593 98 765 4321</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-purple-400 flex-shrink-0" />
-                <span>contacto@elpercherosublimados.com</span>
+                <span>contacto@elperchero.com</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <Clock className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />

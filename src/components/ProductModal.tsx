@@ -39,11 +39,11 @@ export const ProductModal: React.FC<ProductModalProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
             
             {/* Image Preview with Badge */}
-            <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 aspect-square">
+            <div className="relative rounded-2xl overflow-hidden bg-[#0c0f16] border border-slate-800 aspect-square flex items-center justify-center p-2">
               <img
                 src={product.image}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
               {product.badge && (
                 <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold bg-rose-500 text-white shadow-md">

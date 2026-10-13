@@ -57,17 +57,12 @@ export const Header: React.FC<HeaderProps> = ({ onQuoteClick, onApifyClick }) =>
               className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 rounded-lg p-1"
               aria-label="El Perchero Sublimados - Inicio"
             >
-              <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 via-purple-600 to-cyan-500 p-[2px] transition-transform duration-300 group-hover:scale-105 shadow-md shadow-rose-500/20">
-                <div className="w-full h-full bg-[#0b0f19] rounded-[10px] flex items-center justify-center">
-                  {/* Stylized hanger SVG icon */}
-                  <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 4c1.1 0 2 .9 2 2 0 .8-.5 1.5-1.2 1.8L12 8" />
-                    <path d="M12 8L3 14c-.6.4-.3 1.3.4 1.3h17.2c.7 0 1-.9.4-1.3L12 8z" />
-                    <circle cx="8" cy="17" r="1" fill="#06b6d4" />
-                    <circle cx="12" cy="17" r="1" fill="#f43f5e" />
-                    <circle cx="16" cy="17" r="1" fill="#f59e0b" />
-                  </svg>
-                </div>
+              <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 via-cyan-500 to-emerald-400 p-[2px] transition-transform duration-300 group-hover:scale-105 shadow-md shadow-cyan-500/20 overflow-hidden">
+                <img
+                  src="/images/logo-el-perchero.jpg"
+                  alt="Logo El Perchero Taller de Personalización"
+                  className="w-full h-full object-cover rounded-[10px]"
+                />
               </div>
               <div className="flex flex-col">
                 <span className="font-heading font-extrabold text-lg sm:text-xl tracking-tight text-white flex items-center gap-1.5">

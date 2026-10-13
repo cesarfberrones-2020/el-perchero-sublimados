@@ -113,17 +113,17 @@ export const Process: React.FC<{ onQuoteClick: () => void }> = ({ onQuoteClick }
         <div className="mt-16 glass-panel rounded-3xl p-6 sm:p-10 border border-slate-800 relative overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
-            <div className="lg:col-span-5 relative rounded-2xl overflow-hidden aspect-[16/10] bg-slate-950 border border-slate-800 shadow-xl">
+            <div className="lg:col-span-5 relative rounded-2xl overflow-hidden aspect-square max-w-sm mx-auto bg-[#0a0d14] border border-slate-800 shadow-xl">
               <img
-                src="/images/workshop.jpg"
-                alt="Prensa térmica de sublimación en taller de El Perchero"
-                className="w-full h-full object-cover"
+                src="/images/logo-el-perchero.jpg"
+                alt="El Perchero Taller de Personalización - Prensa térmica y arte urbano"
+                className="w-full h-full object-contain"
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
               <div className="absolute bottom-3 left-3 right-3 text-xs text-slate-200 bg-slate-950/80 backdrop-blur-md p-2 rounded-lg border border-white/10 flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Prensa de alta presión neumática y tintas industriales</span>
+                <span>El Perchero - Taller de Personalización Oficial</span>
               </div>
             </div>
 
