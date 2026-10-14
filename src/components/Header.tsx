@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Sparkles, ChevronRight, ShieldCheck } from 'lucide-react';
+import { Menu, X, ChevronRight, ShieldCheck } from 'lucide-react';
 
 interface HeaderProps {
-  onQuoteClick: () => void;
+  onQuoteClick?: () => void;
   onOpenAdmin?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onQuoteClick, onOpenAdmin }) => {
+export const Header: React.FC<HeaderProps> = ({ onOpenAdmin }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -24,7 +24,6 @@ export const Header: React.FC<HeaderProps> = ({ onQuoteClick, onOpenAdmin }) => 
     { name: '¿Cómo Trabajamos?', href: '#proceso' },
     { name: 'Por qué elegirnos', href: '#diferenciales' },
     { name: 'Preguntas', href: '#faq' },
-    { name: 'Contacto', href: '#contacto' },
   ];
 
   return (
@@ -103,16 +102,6 @@ export const Header: React.FC<HeaderProps> = ({ onQuoteClick, onOpenAdmin }) => 
                   <span>Panel Admin</span>
                 </button>
               )}
-
-              <button
-                onClick={onQuoteClick}
-                className="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-semibold rounded-xl group bg-gradient-to-r from-rose-500 via-fuchsia-600 to-cyan-400 hover:from-rose-600 hover:to-cyan-500 text-white shadow-lg shadow-rose-500/25 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-rose-400"
-              >
-                <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-[#080c14]/40 group-hover:bg-transparent rounded-[10px] flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-rose-300 group-hover:text-white animate-spin-slow" />
-                  <span>Cotiza tu diseño</span>
-                </span>
-              </button>
             </div>
 
             {/* Mobile menu trigger */}
@@ -127,12 +116,6 @@ export const Header: React.FC<HeaderProps> = ({ onQuoteClick, onOpenAdmin }) => 
                   Admin
                 </button>
               )}
-              <button
-                onClick={onQuoteClick}
-                className="px-3 py-1.5 text-xs font-bold rounded-lg bg-gradient-to-r from-rose-500 to-cyan-500 text-white shadow-sm"
-              >
-                Cotizar
-              </button>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="tap-target p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500"
@@ -162,19 +145,8 @@ export const Header: React.FC<HeaderProps> = ({ onQuoteClick, onOpenAdmin }) => 
               ))}
             </div>
 
-            <div className="pt-3 border-t border-slate-800/80 flex flex-col gap-2">
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onQuoteClick();
-                }}
-                className="w-full py-3 px-4 rounded-xl text-center font-bold text-white bg-gradient-to-r from-rose-500 via-fuchsia-600 to-cyan-500 shadow-lg shadow-rose-500/20 flex items-center justify-center gap-2"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>Cotiza tu diseño ahora</span>
-              </button>
-
-              {onOpenAdmin && (
+            {onOpenAdmin && (
+              <div className="pt-3 border-t border-slate-800/80">
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
@@ -185,8 +157,8 @@ export const Header: React.FC<HeaderProps> = ({ onQuoteClick, onOpenAdmin }) => 
                   <ShieldCheck className="w-4 h-4 text-cyan-400" />
                   <span>Panel de Administración (Admin)</span>
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )}
       </header>
