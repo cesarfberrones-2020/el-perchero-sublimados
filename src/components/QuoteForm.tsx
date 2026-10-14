@@ -473,28 +473,37 @@ Quedo atento a su respuesta. ¡Gracias!`;
               </div>
 
               {/* LOPDP Privacy Consent Checkbox */}
-              <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  id="privacyConsent"
-                  checked={privacyAccepted}
-                  onChange={(e) => {
-                    setPrivacyAccepted(e.target.checked);
-                    setErrorMessage('');
-                  }}
-                  className="mt-1 w-4 h-4 accent-rose-500 rounded cursor-pointer flex-shrink-0"
-                />
-                <label htmlFor="privacyConsent" className="text-xs text-slate-300 leading-relaxed cursor-pointer">
-                  He leído y acepto la{' '}
-                  <button
-                    type="button"
-                    onClick={onOpenPrivacy}
-                    className="text-cyan-400 hover:text-cyan-300 underline font-semibold"
-                  >
-                    Política de Privacidad y Protección de Datos Personales (LOPDP - Ecuador)
-                  </button>
-                  . Autorizo a <strong>El Perchero Sublimados</strong> a utilizar mis datos de contacto y archivos adjuntos exclusivamente para elaborar mi cotización y maqueta digital.
-                </label>
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/95 border-2 border-cyan-500/40 hover:border-cyan-400/70 transition-colors shadow-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 uppercase tracking-wider flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3 text-cyan-400" />
+                    Permiso de Uso de Datos Personales (LOPDP Ecuador)
+                  </span>
+                  <span className="text-[11px] text-rose-400 font-semibold">* Requerido por Ley</span>
+                </div>
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="privacyConsent"
+                    checked={privacyAccepted}
+                    onChange={(e) => {
+                      setPrivacyAccepted(e.target.checked);
+                      setErrorMessage('');
+                    }}
+                    className="mt-1 w-4 h-4 accent-rose-500 rounded cursor-pointer flex-shrink-0"
+                  />
+                  <label htmlFor="privacyConsent" className="text-xs text-slate-200 leading-relaxed cursor-pointer select-none">
+                    He leído y autorizo el tratamiento de mis datos personales según la{' '}
+                    <button
+                      type="button"
+                      onClick={onOpenPrivacy}
+                      className="text-cyan-400 hover:text-cyan-300 underline font-bold"
+                    >
+                      Política de Privacidad y Protección de Datos Personales (LOPDP - Ecuador)
+                    </button>
+                    . Autorizo a <strong>El Perchero Sublimados</strong> a utilizar mis datos de contacto y diseños adjuntos para elaborar mi cotización y maqueta digital sin transferirlos a terceros.
+                  </label>
+                </div>
               </div>
 
               {/* Action Buttons */}

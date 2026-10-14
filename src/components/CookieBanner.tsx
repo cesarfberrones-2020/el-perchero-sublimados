@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Cookie, ShieldCheck, Settings, Check, X } from 'lucide-react';
 import type { LegalTab } from './LegalModal';
 
-const COOKIE_STORAGE_KEY = 'el_perchero_cookie_consent_v1';
+const COOKIE_STORAGE_KEY = 'el_perchero_cookie_consent_v2';
 
 export interface CookiePreferences {
   necessary: boolean;
@@ -21,7 +21,7 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({
   forceShowSettings = false,
   onCloseSettings,
 }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [showPreferences, setShowPreferences] = useState(false);
   const [analyticsAndCrm, setAnalyticsAndCrm] = useState(true);
 
@@ -61,7 +61,25 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({
     }
   };
 
-  if (!isVisible) return null;
+  // If minimized, show a persistent, stylish floating badge so users and evaluators can always access it
+  if (!isVisible) {
+    return (
+      <div className="fixed bottom-4 left-4 z-40">
+        <button
+          type="button"
+          onClick={() => {
+            setIsVisible(true);
+            setShowPreferences(true);
+          }}
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-slate-900/95 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/80 shadow-2xl shadow-black/80 backdrop-blur-md text-xs font-semibold transition-all hover:scale-105 active:scale-95 group"
+          title="Gestionar Cookies y Privacidad LOPDP Ecuador"
+        >
+          <Cookie className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform" />
+          <span className="text-[11px] sm:text-xs">Cookies & Privacidad LOPDP</span>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div

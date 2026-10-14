@@ -8,7 +8,8 @@ import {
   Send, 
   Check, 
   Sparkles, 
-  Heart 
+  Heart,
+  ShieldCheck 
 } from 'lucide-react';
 
 import type { LegalTab } from './LegalModal';
@@ -221,9 +222,10 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLegal, onOpenCookieSetting
             <button
               type="button"
               onClick={() => onOpenLegal && onOpenLegal('privacy')}
-              className="hover:text-cyan-400 underline-offset-4 hover:underline transition-colors"
+              className="text-cyan-400 hover:text-cyan-300 font-semibold underline-offset-4 hover:underline transition-colors flex items-center gap-1"
             >
-              Política de Privacidad (LOPDP)
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Privacidad & LOPDP</span>
             </button>
             <span className="text-slate-700">•</span>
             <button
@@ -239,15 +241,15 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLegal, onOpenCookieSetting
               onClick={() => onOpenLegal && onOpenLegal('terms')}
               className="hover:text-cyan-400 underline-offset-4 hover:underline transition-colors"
             >
-              Términos y Condiciones
+              Términos de Servicio
             </button>
             <span className="text-slate-700">•</span>
             <button
               type="button"
               onClick={() => onOpenCookieSettings && onOpenCookieSettings()}
-              className="hover:text-rose-400 underline-offset-4 hover:underline transition-colors"
+              className="text-amber-400 hover:text-amber-300 underline-offset-4 hover:underline transition-colors flex items-center gap-1 font-semibold"
             >
-              Configurar Cookies
+              <span>🍪 Gestionar Cookies</span>
             </button>
             {onOpenAdmin && (
               <>
