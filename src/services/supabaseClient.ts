@@ -66,14 +66,14 @@ export const testSupabaseConnection = async (): Promise<{ success: boolean; mess
 
   try {
     const client = createClient(url, anonKey);
-    // Attempt a light query to check authentication
-    const { error } = await client.from('quotes').select('id').limit(1);
+    // Attempt a light query to check authentication and table existence
+    const { error } = await client.from('el_perchero_cotizaciones').select('id, nombre_completo').limit(1);
     
     if (error) {
-      if (error.code === '42P01' || error.message.includes('relation "quotes" does not exist') || error.message.includes('not found')) {
+      if (error.code === '42P01' || error.message.includes('el_perchero_cotizaciones') || error.message.includes('not found')) {
         return {
           success: true,
-          message: 'Conexión exitosa a Supabase. Nota: La tabla "quotes" aún no está creada. Utiliza el script SQL provisto en la pestaña Supabase.',
+          message: 'Conexión exitosa a Supabase. Nota: La tabla "el_perchero_cotizaciones" aún no está creada o tiene otro nombre. Revisa el script SQL.',
         };
       }
       return {
@@ -84,7 +84,7 @@ export const testSupabaseConnection = async (): Promise<{ success: boolean; mess
 
     return {
       success: true,
-      message: '¡Conexión exitosa y tabla "quotes" detectada correctamente en Supabase!',
+      message: '¡Conexión exitosa y tabla "el_perchero_cotizaciones" detectada correctamente en Supabase!',
     };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);

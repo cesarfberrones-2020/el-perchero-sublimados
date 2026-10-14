@@ -132,7 +132,7 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
     setIsSubmitting(true);
     setErrorMessage('');
 
-    // Save lead to Supabase & local database for the Admin Dashboard
+    // Save lead to Supabase (tabla el_perchero_cotizaciones) & local database for the Admin Dashboard
     createQuote({
       fullName: formData.fullName,
       phone: formData.phone,
@@ -141,6 +141,7 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
       quantity: formData.quantity,
       specifications: formData.specifications,
       fileName: formData.fileName,
+      aceptaLopdp: privacyAccepted,
     }).catch((err) => {
       console.warn('Error guardando cotización en servicio:', err);
     });
