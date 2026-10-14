@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sendLeadToApify } from '../services/apifyService';
+import { createQuote } from '../services/quotesService';
 import type { QuoteFormData } from '../types';
 
 interface QuoteFormProps {
@@ -131,6 +132,20 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
     setIsSubmitting(true);
     setErrorMessage('');
 
+    // Save lead to Supabase & local database for the Admin Dashboard
+    createQuote({
+      fullName: formData.fullName,
+      phone: formData.phone,
+      email: formData.email,
+      productType: formData.productType,
+      quantity: formData.quantity,
+      specifications: formData.specifications,
+      fileName: formData.fileName,
+    }).catch((err) => {
+      console.warn('Error guardando cotización en servicio:', err);
+    });
+
+    // Also trigger Apify webhook synchronization
     sendLeadToApify({
       fullName: formData.fullName,
       phone: formData.phone,

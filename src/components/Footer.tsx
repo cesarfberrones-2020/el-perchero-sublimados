@@ -16,9 +16,10 @@ import type { LegalTab } from './LegalModal';
 interface FooterProps {
   onOpenLegal?: (tab: LegalTab) => void;
   onOpenCookieSettings?: () => void;
+  onOpenAdmin?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenLegal, onOpenCookieSettings }) => {
+export const Footer: React.FC<FooterProps> = ({ onOpenLegal, onOpenCookieSettings, onOpenAdmin }) => {
   const [subscribed, setSubscribed] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
 
@@ -248,6 +249,18 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLegal, onOpenCookieSetting
             >
               Configurar Cookies
             </button>
+            {onOpenAdmin && (
+              <>
+                <span className="text-slate-700">•</span>
+                <button
+                  type="button"
+                  onClick={onOpenAdmin}
+                  className="hover:text-emerald-400 underline-offset-4 hover:underline transition-colors flex items-center gap-1"
+                >
+                  <span>Panel Admin</span>
+                </button>
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-2">

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Sparkles, PhoneCall, ChevronRight } from 'lucide-react';
+import { Menu, X, Sparkles, ChevronRight, ShieldCheck } from 'lucide-react';
 
 interface HeaderProps {
   onQuoteClick: () => void;
-  onApifyClick: () => void;
+  onOpenAdmin?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onQuoteClick, onApifyClick }) => {
+export const Header: React.FC<HeaderProps> = ({ onQuoteClick, onOpenAdmin }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -92,33 +92,23 @@ export const Header: React.FC<HeaderProps> = ({ onQuoteClick, onApifyClick }) =>
 
             {/* Header Right Actions */}
             <div className="hidden lg:flex items-center gap-3">
-              <button
-                type="button"
-                onClick={onApifyClick}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-400 hover:text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 px-3 py-2 rounded-lg border border-cyan-500/30 transition-all shadow-sm"
-                title="Configuración y Estado de Apify"
-              >
-                <span className="w-2 h-2 rounded-full bg-cyan-400" />
-                <span>Apify API</span>
-              </button>
-
-              <a
-                href="https://wa.me/593990260253?text=Hola%20El%20Perchero%20Sublimados!%20Quisiera%20asesor%C3%ADa%20sobre%20personalizaci%C3%B3n"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-2 rounded-lg border border-emerald-500/20 transition-all"
-                title="Atención directa por WhatsApp: 0990260253"
-              >
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <PhoneCall className="w-3.5 h-3.5" />
-                <span>WhatsApp: 0990260253</span>
-              </a>
+              {onOpenAdmin && (
+                <button
+                  type="button"
+                  onClick={onOpenAdmin}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-300 hover:text-white bg-slate-900/90 hover:bg-slate-800 px-3.5 py-2.5 rounded-xl border border-slate-700/80 transition-all shadow-sm group"
+                  title="Acceso al Panel de Administración y Base de Datos"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 group-hover:rotate-12 transition-transform" />
+                  <span>Panel Admin</span>
+                </button>
+              )}
 
               <button
                 onClick={onQuoteClick}
                 className="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-semibold rounded-xl group bg-gradient-to-r from-rose-500 via-fuchsia-600 to-cyan-400 hover:from-rose-600 hover:to-cyan-500 text-white shadow-lg shadow-rose-500/25 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-rose-400"
               >
-                <span className="relative px-4 py-2 transition-all ease-in duration-75 bg-[#080c14]/40 group-hover:bg-transparent rounded-[10px] flex items-center gap-2">
+                <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-[#080c14]/40 group-hover:bg-transparent rounded-[10px] flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-rose-300 group-hover:text-white animate-spin-slow" />
                   <span>Cotiza tu diseño</span>
                 </span>
@@ -127,13 +117,16 @@ export const Header: React.FC<HeaderProps> = ({ onQuoteClick, onApifyClick }) =>
 
             {/* Mobile menu trigger */}
             <div className="flex md:hidden items-center gap-2">
-              <button
-                type="button"
-                onClick={onApifyClick}
-                className="px-2.5 py-1.5 text-xs font-bold rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
-              >
-                Apify
-              </button>
+              {onOpenAdmin && (
+                <button
+                  type="button"
+                  onClick={onOpenAdmin}
+                  className="px-2.5 py-1.5 text-xs font-bold rounded-lg bg-slate-900 border border-slate-700 text-cyan-300"
+                  title="Admin"
+                >
+                  Admin
+                </button>
+              )}
               <button
                 onClick={onQuoteClick}
                 className="px-3 py-1.5 text-xs font-bold rounded-lg bg-gradient-to-r from-rose-500 to-cyan-500 text-white shadow-sm"
@@ -181,15 +174,18 @@ export const Header: React.FC<HeaderProps> = ({ onQuoteClick, onApifyClick }) =>
                 <span>Cotiza tu diseño ahora</span>
               </button>
 
-              <a
-                href="https://wa.me/593990260253?text=Hola%20El%20Perchero%20Sublimados!%20Quisiera%20cotizar"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-2.5 px-4 rounded-xl text-center font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center gap-2"
-              >
-                <PhoneCall className="w-4 h-4" />
-                <span>WhatsApp Directo: 0990260253</span>
-              </a>
+              {onOpenAdmin && (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenAdmin();
+                  }}
+                  className="w-full py-2.5 px-4 rounded-xl text-center font-semibold text-xs text-slate-300 bg-slate-900 border border-slate-700 flex items-center justify-center gap-2"
+                >
+                  <ShieldCheck className="w-4 h-4 text-cyan-400" />
+                  <span>Panel de Administración (Admin)</span>
+                </button>
+              )}
             </div>
           </div>
         )}

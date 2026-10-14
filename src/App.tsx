@@ -13,6 +13,7 @@ import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { ApifyIntegrationModal } from './components/ApifyIntegrationModal';
 import { LegalModal, type LegalTab } from './components/LegalModal';
 import { CookieBanner } from './components/CookieBanner';
+import { AdminDashboard } from './components/AdminDashboard';
 import type { ProductItem } from './types';
 
 export function App() {
@@ -23,6 +24,7 @@ export function App() {
     previewUrl: '',
   });
   const [isApifyModalOpen, setIsApifyModalOpen] = useState<boolean>(false);
+  const [isAdminOpen, setIsAdminOpen] = useState<boolean>(false);
   const [legalModalState, setLegalModalState] = useState<{ isOpen: boolean; tab: LegalTab }>({
     isOpen: false,
     tab: 'privacy',
@@ -55,7 +57,7 @@ export function App() {
       {/* Navigation Header */}
       <Header 
         onQuoteClick={() => scrollToQuote()} 
-        onApifyClick={() => setIsApifyModalOpen(true)}
+        onOpenAdmin={() => setIsAdminOpen(true)}
       />
 
       <main className="flex-1">
@@ -99,6 +101,7 @@ export function App() {
       <Footer
         onOpenLegal={(tab) => openLegalModal(tab)}
         onOpenCookieSettings={() => setForceCookieSettings(true)}
+        onOpenAdmin={() => setIsAdminOpen(true)}
       />
 
       {/* Floating Instant WhatsApp Button */}
@@ -124,6 +127,12 @@ export function App() {
         product={selectedProductForModal}
         onClose={() => setSelectedProductForModal(null)}
         onSelectForQuote={(name) => scrollToQuote(name)}
+      />
+
+      {/* Admin Dashboard & Supabase Manager */}
+      <AdminDashboard
+        isOpen={isAdminOpen}
+        onClose={() => setIsAdminOpen(false)}
       />
 
       {/* Apify Integration & Testing Modal */}
