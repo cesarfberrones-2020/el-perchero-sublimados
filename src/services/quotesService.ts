@@ -56,7 +56,7 @@ export const mapRowToQuoteRecord = (row: any): QuoteRecord => {
     product_type: prod,
     quantity: cant,
     specifications: detalles,
-    file_name: row.archivo_nombre || row.file_name || '',
+    file_name: row.nombre_archivo_adjunto || row.archivo_nombre || row.file_name || '',
     status: estado,
     notes: row.notas || row.notes || '',
     source: row.source || 'landing_page_el_perchero',
@@ -232,7 +232,7 @@ export const createQuote = async (payload: {
   if (isSupabaseConfigured()) {
     try {
       const client = getSupabaseClient();
-      const insertData = {
+      const insertData: Record<string, any> = {
         nombre_completo: payload.fullName,
         telefono: payload.phone,
         correo: payload.email || null,
@@ -240,18 +240,29 @@ export const createQuote = async (payload: {
         cantidad_aproximada: payload.quantity,
         detalles_idea: payload.specifications || null,
         acepta_lopdp: lopdpAccepted,
+        nombre_archivo_adjunto: payload.fileName || null,
+        estado: 'Pendiente',
       };
 
-      // Try inserting with 'estado' column first
+      // Try inserting with all fields
       let { error } = await client
         .from('el_perchero_cotizaciones')
-        .insert([{ ...insertData, estado: 'Pendiente' }]);
+        .insert([insertData]);
 
-      // If 'estado' column is not in the table, retry with strictly the 7 specified fields
-      if (error && (error.message.includes('estado') || error.code === '42703')) {
+      // If optional column error occurs, retry with strictly the 7 specified core fields
+      if (error && (error.code === '42703' || error.message.includes('column'))) {
+        const strictData = {
+          nombre_completo: payload.fullName,
+          telefono: payload.phone,
+          correo: payload.email || null,
+          producto_a_personalizar: payload.productType,
+          cantidad_aproximada: payload.quantity,
+          detalles_idea: payload.specifications || null,
+          acepta_lopdp: lopdpAccepted,
+        };
         const retry = await client
           .from('el_perchero_cotizaciones')
-          .insert([insertData]);
+          .insert([strictData]);
         error = retry.error;
       }
 

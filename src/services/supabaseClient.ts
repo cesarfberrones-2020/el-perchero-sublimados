@@ -5,12 +5,14 @@ const STORAGE_KEY_KEY = 'el_perchero_supabase_anon_key';
 
 // Official Supabase credentials for El Perchero Sublimados
 export const OFFICIAL_SUPABASE_URL = 'https://ieepblxrqzbthapkngje.supabase.co';
+export const OFFICIAL_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImllZXBibHhycXpidGhhcGtuZ2plIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwNDM0OTIsImV4cCI6MjEwNjYxOTQ5Mn0.F4HXCV1MT2ZljZseiNBJa10BWuT8AL5vfuM7s99bpjE';
+
 const DEFAULT_URL = import.meta.env.VITE_SUPABASE_URL || OFFICIAL_SUPABASE_URL;
-const DEFAULT_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const DEFAULT_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || OFFICIAL_SUPABASE_ANON_KEY;
 
 export const getSupabaseConfig = () => {
   const url = import.meta.env.VITE_SUPABASE_URL || localStorage.getItem(STORAGE_KEY_URL) || OFFICIAL_SUPABASE_URL;
-  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || localStorage.getItem(STORAGE_KEY_KEY) || DEFAULT_ANON_KEY;
+  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || localStorage.getItem(STORAGE_KEY_KEY) || OFFICIAL_SUPABASE_ANON_KEY;
   return { url, anonKey };
 };
 
