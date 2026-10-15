@@ -16,7 +16,13 @@ import {
   Lock, 
   ShieldCheck, 
   Clock, 
-  Flame
+  Flame,
+  ClipboardList,
+  DollarSign,
+  Package,
+  ShoppingBag,
+  PlusCircle,
+  Plus
 } from 'lucide-react';
 import { 
   fetchAllQuotes, 
@@ -29,6 +35,12 @@ import {
   setSupabaseConfig, 
   testSupabaseConnection 
 } from '../services/supabaseClient';
+import {
+  fetchBitacora,
+  createBitacoraEntry,
+  deleteBitacoraEntry,
+  type BitacoraEntry
+} from '../services/bitacoraService';
 
 interface AdminDashboardProps {
   isOpen: boolean;
@@ -44,7 +56,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
   const [authError, setAuthError] = useState('');
 
   // Dashboard navigation tabs
-  const [activeTab, setActiveTab] = useState<'kpis' | 'quotes' | 'supabase'>('quotes');
+  const [activeTab, setActiveTab] = useState<'quotes' | 'kpis' | 'bitacora' | 'supabase'>('quotes');
 
   // Quotes data & filters
   const [quotes, setQuotes] = useState<QuoteRecord[]>([]);
@@ -52,6 +64,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isFromSupabase, setIsFromSupabase] = useState<boolean>(false);
+
+  // Bitácora state
+  const [bitacoraEntries, setBitacoraEntries] = useState<BitacoraEntry[]>([]);
+  const [isBitacoraFromSupabase, setIsBitacoraFromSupabase] = useState<boolean>(false);
+  const [isBitacoraLoading, setIsBitacoraLoading] = useState<boolean>(false);
+  const [bitacoraSearch, setBitacoraSearch] = useState<string>('');
+  const [bitacoraEventFilter, setBitacoraEventFilter] = useState<string>('all');
+  const [showNewEntryModal, setShowNewEntryModal] = useState<boolean>(false);
+  const [copiedBitacoraSql, setCopiedBitacoraSql] = useState<boolean>(false);
+
+  // New Bitácora form state
+  const [newEntryForm, setNewEntryForm] = useState<{
+    tipo_evento: BitacoraEntry['tipo_evento'];
+    cliente: string;
+    producto: string;
+    cantidad_unidades: number;
+    monto_usd: number;
+    estado: BitacoraEntry['estado'];
+    notas: string;
+  }>({
+    tipo_evento: 'Venta Cerrada',
+    cliente: '',
+    producto: 'Gorras Personalizadas ($5)',
+    cantidad_unidades: 12,
+    monto_usd: 60.0,
+    estado: 'Completado',
+    notas: '',
+  });
 
   // Supabase connection tab state
   const [supabaseUrl, setSupabaseUrl] = useState('');
@@ -68,6 +108,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
       setSupabaseKey(cfg.anonKey);
       if (isAuthenticated) {
         loadQuotes();
+        loadBitacora();
       }
     }
   }, [isOpen, isAuthenticated]);
@@ -80,6 +121,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
     setIsLoading(false);
   };
 
+  const loadBitacora = async () => {
+    setIsBitacoraLoading(true);
+    const result = await fetchBitacora();
+    setBitacoraEntries(result.entries);
+    setIsBitacoraFromSupabase(result.fromSupabase);
+    setIsBitacoraLoading(false);
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     // Default PIN: 1234 or "admin"
@@ -88,9 +137,121 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
       sessionStorage.setItem('el_perchero_admin_auth', 'true');
       setAuthError('');
       loadQuotes();
+      loadBitacora();
     } else {
       setAuthError('PIN incorrecto. (Usa "1234" o "admin" para acceso de evaluación).');
     }
+  };
+
+  const handleCreateBitacoraSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newEntryForm.cliente.trim() || !newEntryForm.producto.trim()) return;
+
+    await createBitacoraEntry(newEntryForm);
+    setShowNewEntryModal(false);
+    setNewEntryForm({
+      tipo_evento: 'Venta Cerrada',
+      cliente: '',
+      producto: 'Gorras Personalizadas ($5)',
+      cantidad_unidades: 12,
+      monto_usd: 60.0,
+      estado: 'Completado',
+      notas: '',
+    });
+    loadBitacora();
+  };
+
+  const handleDeleteBitacoraEntry = async (id: string) => {
+    if (window.confirm('¿Deseas eliminar este registro de la bitácora?')) {
+      await deleteBitacoraEntry(id);
+      setBitacoraEntries((prev) => prev.filter((b) => b.id !== id));
+    }
+  };
+
+  const handleConvertQuoteToSale = async (quote: QuoteRecord) => {
+    const cliente = quote.nombre_completo || quote.full_name || 'Cliente';
+    const prod = quote.producto_a_personalizar || quote.product_type || 'Sublimación';
+    const cantNum = parseInt((quote.cantidad_aproximada || quote.quantity || '12').replace(/\D/g, ''), 10) || 12;
+    
+    // Calculate estimate based on item
+    let unitPrice = 10;
+    if (prod.toLowerCase().includes('gorra')) unitPrice = 5;
+    else if (prod.toLowerCase().includes('taza')) unitPrice = 3.5;
+    else if (prod.toLowerCase().includes('hoodie')) unitPrice = 15;
+    else if (prod.toLowerCase().includes('termo')) unitPrice = 10;
+
+    const totalEst = cantNum * unitPrice;
+
+    await createBitacoraEntry({
+      tipo_evento: 'Venta Cerrada',
+      cliente: `${cliente} (${quote.telefono || quote.phone || 'S/N'})`,
+      producto: `${prod} (${quote.detalles_idea || quote.specifications || 'Personalizado'})`,
+      cantidad_unidades: cantNum,
+      monto_usd: totalEst,
+      estado: 'Completado',
+      notas: `Convertido automáticamente desde Cotización #${quote.id}.`,
+    });
+
+    // Also update quote status to Completado
+    await handleStatusChange(quote.id, 'Completado');
+    await loadBitacora();
+    setActiveTab('bitacora');
+  };
+
+  const exportBitacoraToCsv = () => {
+    const headers = [
+      'ID',
+      'Fecha',
+      'Tipo de Evento',
+      'Cliente',
+      'Producto',
+      'Cantidad (Unidades)',
+      'Monto USD ($)',
+      'Estado',
+      'Notas / Observaciones'
+    ];
+    const rows = bitacoraEntries.map((b) => [
+      b.id,
+      new Date(b.created_at).toLocaleString(),
+      `"${b.tipo_evento}"`,
+      `"${b.cliente.replace(/"/g, '""')}"`,
+      `"${b.producto.replace(/"/g, '""')}"`,
+      b.cantidad_unidades,
+      b.monto_usd.toFixed(2),
+      b.estado,
+      `"${(b.notas || '').replace(/"/g, '""')}"`
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `el_perchero_bitacora_ventas_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const copyBitacoraSqlScript = () => {
+    const sql = `-- Tabla de Bitácora y Registro de Ventas para El Perchero Sublimados
+CREATE TABLE IF NOT EXISTS el_perchero_bitacora (
+  id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  tipo_evento TEXT NOT NULL,
+  cliente TEXT NOT NULL,
+  producto TEXT NOT NULL,
+  cantidad_unidades INTEGER DEFAULT 0,
+  monto_usd NUMERIC(10,2) DEFAULT 0.00,
+  estado TEXT DEFAULT 'Completado',
+  notas TEXT
+);
+
+-- Políticas RLS
+ALTER TABLE el_perchero_bitacora ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Permitir gestión de bitácora" ON el_perchero_bitacora FOR ALL USING (true);
+`;
+    navigator.clipboard.writeText(sql);
+    setCopiedBitacoraSql(true);
+    setTimeout(() => setCopiedBitacoraSql(false), 2500);
   };
 
   const handleStatusChange = async (id: string, newStatus: QuoteRecord['status']) => {
@@ -202,11 +363,28 @@ CREATE POLICY "Permitir eliminación de cotizaciones" ON el_perchero_cotizacione
     return matchesStatus && matchesSearch;
   });
 
-  // Calculate KPIs
+  // Calculate KPIs for Quotes
   const totalCount = quotes.length;
   const pendingCount = quotes.filter((q) => (q.estado || q.status) === 'Pendiente').length;
   const inProductionCount = quotes.filter((q) => (q.estado || q.status) === 'En Producción').length;
   const completedCount = quotes.filter((q) => (q.estado || q.status) === 'Completado').length;
+
+  // Calculate KPIs for Bitácora de Ventas
+  const totalVentasUsd = bitacoraEntries.reduce((sum, b) => sum + (Number(b.monto_usd) || 0), 0);
+  const totalUnidadesVendidas = bitacoraEntries.reduce((sum, b) => sum + (Number(b.cantidad_unidades) || 0), 0);
+  const totalPedidos = bitacoraEntries.length;
+  const ticketPromedio = totalPedidos > 0 ? totalVentasUsd / totalPedidos : 0;
+
+  // Filtered Bitácora entries
+  const filteredBitacora = bitacoraEntries.filter((b) => {
+    const matchesEvent = bitacoraEventFilter === 'all' || b.tipo_evento === bitacoraEventFilter;
+    const term = bitacoraSearch.toLowerCase();
+    const matchesSearch =
+      b.cliente.toLowerCase().includes(term) ||
+      b.producto.toLowerCase().includes(term) ||
+      (b.notas || '').toLowerCase().includes(term);
+    return matchesEvent && matchesSearch;
+  });
 
   if (!isOpen) return null;
 
@@ -334,6 +512,22 @@ CREATE POLICY "Permitir eliminación de cotizaciones" ON el_perchero_cotizacione
               >
                 <ListFilter className="w-4 h-4 text-cyan-400" />
                 <span>Gestión de Cotizaciones ({totalCount})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('bitacora')}
+                className={`px-4 py-2.5 text-xs sm:text-sm font-bold rounded-t-xl border-b-2 flex items-center gap-2 transition-all whitespace-nowrap ${
+                  activeTab === 'bitacora'
+                    ? 'border-amber-400 text-white bg-slate-900/90'
+                    : 'border-transparent text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <ClipboardList className="w-4 h-4 text-amber-400" />
+                <span>Bitácora & Ventas ({totalPedidos})</span>
+                <span className="hidden sm:inline-block px-1.5 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-300 font-mono font-bold">
+                  ${totalVentasUsd.toFixed(0)} USD
+                </span>
               </button>
 
               <button
@@ -550,20 +744,251 @@ CREATE POLICY "Permitir eliminación de cotizaciones" ON el_perchero_cotizacione
                           </div>
 
                           {/* Actions Bottom Bar */}
-                          <div className="pt-2 flex items-center justify-between gap-3 text-xs">
+                          <div className="pt-2 flex flex-wrap items-center justify-between gap-3 text-xs border-t border-slate-800/60 mt-1">
                             <span className="text-[10px] text-slate-500 font-mono">
                               ID: {quote.id}
                             </span>
 
-                            <a
-                              href={waUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="px-3.5 py-1.5 rounded-xl font-bold text-xs text-white bg-emerald-600 hover:bg-emerald-500 flex items-center gap-1.5 shadow-md shadow-emerald-600/20 transition-all"
-                            >
-                              <MessageCircle className="w-3.5 h-3.5" />
-                              <span>Contactar x WhatsApp</span>
-                            </a>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => handleConvertQuoteToSale(quote)}
+                                className="px-3 py-1.5 rounded-xl font-bold text-xs text-amber-300 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 flex items-center gap-1.5 transition-colors shadow-sm"
+                                title="Registrar esta cotización en la bitácora de ventas y pedidos"
+                              >
+                                <PlusCircle className="w-3.5 h-3.5" />
+                                <span>Pasar a Venta</span>
+                              </button>
+
+                              <a
+                                href={waUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-3.5 py-1.5 rounded-xl font-bold text-xs text-white bg-emerald-600 hover:bg-emerald-500 flex items-center gap-1.5 shadow-md shadow-emerald-600/20 transition-all"
+                              >
+                                <MessageCircle className="w-3.5 h-3.5" />
+                                <span>Contactar x WhatsApp</span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Tab: Bitácora de Administración y Registro de Ventas */}
+            {activeTab === 'bitacora' && (
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+                {/* Notice Banner */}
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-950/40 via-amber-900/20 to-slate-900 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 flex-shrink-0">
+                      <ClipboardList className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                        <span>Bitácora de Ventas & Pedidos (Uso Exclusivo Administrador)</span>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                          isBitacoraFromSupabase
+                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                            : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                        }`}>
+                          {isBitacoraFromSupabase ? 'Sincronizado con Supabase' : 'Almacenamiento Local (Fallback)'}
+                        </span>
+                      </h3>
+                      <p className="text-xs text-slate-300">
+                        Esta sección es privada para tu control operativo. Aquí ves tus ventas en USD, pedidos en curso y despachos realizados.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowNewEntryModal(true)}
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 flex items-center gap-2 shadow-lg shadow-amber-400/20 transition-all active:scale-95 whitespace-nowrap"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>+ Registrar Venta / Pedido</span>
+                  </button>
+                </div>
+
+                {/* KPI Metrics Summary (4 Cards) */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                  <div className="glass-card rounded-2xl p-4 sm:p-5 border border-slate-800 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">Total Facturado</span>
+                      <DollarSign className="w-4 h-4 text-emerald-400" />
+                    </div>
+                    <p className="text-2xl sm:text-3xl font-extrabold text-white">
+                      ${totalVentasUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                    <p className="text-[10px] text-slate-400">Ventas en USD (Ecuador)</p>
+                  </div>
+
+                  <div className="glass-card rounded-2xl p-4 sm:p-5 border border-slate-800 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider">Pedidos / Eventos</span>
+                      <ShoppingBag className="w-4 h-4 text-cyan-400" />
+                    </div>
+                    <p className="text-2xl sm:text-3xl font-extrabold text-white">{totalPedidos}</p>
+                    <p className="text-[10px] text-slate-400">Registros en bitácora</p>
+                  </div>
+
+                  <div className="glass-card rounded-2xl p-4 sm:p-5 border border-slate-800 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-purple-400 uppercase tracking-wider">Unidades Fabricadas</span>
+                      <Package className="w-4 h-4 text-purple-400" />
+                    </div>
+                    <p className="text-2xl sm:text-3xl font-extrabold text-white">{totalUnidadesVendidas}</p>
+                    <p className="text-[10px] text-slate-400">
+                      ≈ {(totalUnidadesVendidas / 12).toFixed(1)} docenas producidas
+                    </p>
+                  </div>
+
+                  <div className="glass-card rounded-2xl p-4 sm:p-5 border border-slate-800 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">Ticket Promedio</span>
+                      <BarChart3 className="w-4 h-4 text-amber-400" />
+                    </div>
+                    <p className="text-2xl sm:text-3xl font-extrabold text-white">
+                      ${ticketPromedio.toFixed(2)}
+                    </p>
+                    <p className="text-[10px] text-slate-400">Promedio por pedido</p>
+                  </div>
+                </div>
+
+                {/* Filter and Search Bar */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={bitacoraSearch}
+                      onChange={(e) => setBitacoraSearch(e.target.value)}
+                      placeholder="Buscar por cliente, producto o nota..."
+                      className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2 overflow-x-auto">
+                    <select
+                      value={bitacoraEventFilter}
+                      onChange={(e) => setBitacoraEventFilter(e.target.value)}
+                      className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-300 focus:outline-none focus:border-amber-400 cursor-pointer"
+                    >
+                      <option value="all">Todos los eventos</option>
+                      <option value="Venta Cerrada">Venta Cerrada</option>
+                      <option value="Nuevo Pedido">Nuevo Pedido</option>
+                      <option value="En Producción">En Producción</option>
+                      <option value="Entrega Realizada">Entrega Realizada</option>
+                      <option value="Cotización">Cotización</option>
+                    </select>
+
+                    <button
+                      type="button"
+                      onClick={loadBitacora}
+                      disabled={isBitacoraLoading}
+                      className="p-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+                      title="Recargar bitácora"
+                    >
+                      <RefreshCw className={`w-4 h-4 ${isBitacoraLoading ? 'animate-spin' : ''}`} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={exportBitacoraToCsv}
+                      className="px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-200 flex items-center gap-1.5 transition-colors"
+                      title="Descargar bitácora en CSV"
+                    >
+                      <Download className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Exportar Bitácora</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Table of Entries */}
+                <div className="space-y-3">
+                  {filteredBitacora.length === 0 ? (
+                    <div className="text-center py-12 text-slate-500 text-xs space-y-2">
+                      <p>No hay registros que coincidan con la búsqueda.</p>
+                      <button
+                        onClick={() => {
+                          setBitacoraEventFilter('all');
+                          setBitacoraSearch('');
+                        }}
+                        className="text-amber-400 hover:underline"
+                      >
+                        Limpiar filtros
+                      </button>
+                    </div>
+                  ) : (
+                    filteredBitacora.map((entry) => {
+                      const badgeColor =
+                        entry.tipo_evento === 'Venta Cerrada'
+                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                          : entry.tipo_evento === 'Entrega Realizada'
+                          ? 'bg-blue-500/20 text-blue-300 border-blue-500/40'
+                          : entry.tipo_evento === 'En Producción'
+                          ? 'bg-purple-500/20 text-purple-300 border-purple-500/40'
+                          : 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+
+                      return (
+                        <div
+                          key={entry.id}
+                          className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 hover:border-slate-700 transition-all space-y-3"
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${badgeColor}`}>
+                                {entry.tipo_evento}
+                              </span>
+                              <span className="text-xs font-bold text-white">
+                                {entry.cliente}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-black text-emerald-400 font-mono">
+                                ${Number(entry.monto_usd).toFixed(2)} USD
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteBitacoraEntry(entry.id)}
+                                className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-900 transition-colors"
+                                title="Eliminar registro de bitácora"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-slate-400">
+                            <div>
+                              <strong className="text-slate-300">Producto:</strong> {entry.producto}
+                            </div>
+                            <div>
+                              <strong className="text-slate-300">Cantidad:</strong>{' '}
+                              <span className="text-amber-300 font-bold">{entry.cantidad_unidades} unidades</span> (
+                              {(entry.cantidad_unidades / 12).toFixed(1)} docenas)
+                            </div>
+                            <div>
+                              <strong className="text-slate-300">Estado:</strong>{' '}
+                              <span className="text-slate-200">{entry.estado}</span>
+                            </div>
+                          </div>
+
+                          {entry.notas && (
+                            <p className="text-[11px] text-slate-300 bg-slate-900/50 p-2.5 rounded-xl border border-slate-800/80 italic">
+                              📝 {entry.notas}
+                            </p>
+                          )}
+
+                          <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between pt-1">
+                            <span>ID: {entry.id}</span>
+                            <span>{new Date(entry.created_at).toLocaleString()}</span>
                           </div>
                         </div>
                       );
@@ -774,12 +1199,12 @@ CREATE POLICY "Permitir eliminación de cotizaciones" ON el_perchero_cotizacione
                   </div>
                 </div>
 
-                {/* SQL Table Creation Guide */}
+                {/* SQL Table Creation Guide - Cotizaciones */}
                 <div className="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="text-xs font-bold text-white uppercase tracking-wider">
-                        Script SQL para tabla el_perchero_cotizaciones en Supabase
+                        1. Script SQL para tabla el_perchero_cotizaciones en Supabase
                       </h4>
                       <p className="text-[11px] text-slate-400">
                         Copia y pega este script en el <strong>SQL Editor</strong> de tu proyecto Supabase.
@@ -817,12 +1242,213 @@ CREATE POLICY "Permitir eliminación de cotizaciones" ON el_perchero_cotizacione
   detalles_idea TEXT,
   acepta_lopdp BOOLEAN DEFAULT true,
   estado TEXT DEFAULT 'Pendiente'
-);`}
+);
+
+ALTER TABLE el_perchero_cotizaciones ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Permitir inserción pública de cotizaciones" ON el_perchero_cotizaciones FOR INSERT WITH CHECK (true);
+CREATE POLICY "Permitir lectura para administración" ON el_perchero_cotizaciones FOR SELECT USING (true);
+CREATE POLICY "Permitir actualización de estado" ON el_perchero_cotizaciones FOR UPDATE USING (true);
+CREATE POLICY "Permitir eliminación de cotizaciones" ON el_perchero_cotizaciones FOR DELETE USING (true);`}
+                  </pre>
+                </div>
+
+                {/* SQL Table Creation Guide - Bitácora */}
+                <div className="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                        2. Script SQL para tabla el_perchero_bitacora (Ventas & Pedidos)
+                      </h4>
+                      <p className="text-[11px] text-slate-400">
+                        Copia y pega este script en el <strong>SQL Editor</strong> de Supabase para activar el guardado en la nube de tu bitácora.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={copyBitacoraSqlScript}
+                      className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors"
+                    >
+                      {copiedBitacoraSql ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>¡Copiado!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Copiar SQL Bitácora</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <pre className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-[11px] font-mono text-amber-300 overflow-x-auto leading-relaxed">
+{`CREATE TABLE IF NOT EXISTS el_perchero_bitacora (
+  id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  tipo_evento TEXT NOT NULL,
+  cliente TEXT NOT NULL,
+  producto TEXT NOT NULL,
+  cantidad_unidades INTEGER DEFAULT 0,
+  monto_usd NUMERIC(10,2) DEFAULT 0.00,
+  estado TEXT DEFAULT 'Completado',
+  notas TEXT
+);
+
+ALTER TABLE el_perchero_bitacora ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Permitir gestión de bitácora" ON el_perchero_bitacora FOR ALL USING (true);`}
                   </pre>
                 </div>
               </div>
             )}
           </>
+        )}
+
+        {/* Modal: Registrar Venta / Pedido en Bitácora */}
+        {showNewEntryModal && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/80 backdrop-blur-sm animate-fadeIn"
+            role="dialog"
+            aria-modal="true"
+          >
+            <div className="w-full max-w-lg bg-[#0b0f19] border border-amber-500/30 rounded-3xl p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                  <PlusCircle className="w-5 h-5 text-amber-400" />
+                  <span>Nuevo Registro en Bitácora de Ventas</span>
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setShowNewEntryModal(false)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleCreateBitacoraSubmit} className="space-y-3 text-xs">
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">Cliente / Empresa / Teléfono *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newEntryForm.cliente}
+                    onChange={(e) => setNewEntryForm({ ...newEntryForm, cliente: e.target.value })}
+                    placeholder="Ej: David Morales (0991234567)"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">Producto a Personalizar *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newEntryForm.producto}
+                    onChange={(e) => setNewEntryForm({ ...newEntryForm, producto: e.target.value })}
+                    placeholder="Ej: Gorras Trucker con Parche HD"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-300 font-bold mb-1">Cantidad (Unidades) *</label>
+                    <input
+                      type="number"
+                      min="1"
+                      required
+                      value={newEntryForm.cantidad_unidades}
+                      onChange={(e) => {
+                        const cant = Number(e.target.value) || 1;
+                        setNewEntryForm({ 
+                          ...newEntryForm, 
+                          cantidad_unidades: cant,
+                        });
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400"
+                    />
+                    <span className="text-[10px] text-slate-400">
+                      = {(newEntryForm.cantidad_unidades / 12).toFixed(1)} docenas
+                    </span>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-bold mb-1">Monto Total ($ USD) *</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      required
+                      value={newEntryForm.monto_usd}
+                      onChange={(e) => setNewEntryForm({ ...newEntryForm, monto_usd: Number(e.target.value) || 0 })}
+                      placeholder="60.00"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400 font-mono font-bold"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-300 font-bold mb-1">Tipo de Evento</label>
+                    <select
+                      value={newEntryForm.tipo_evento}
+                      onChange={(e) => setNewEntryForm({ ...newEntryForm, tipo_evento: e.target.value as any })}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 focus:outline-none focus:border-amber-400"
+                    >
+                      <option value="Venta Cerrada">Venta Cerrada</option>
+                      <option value="Nuevo Pedido">Nuevo Pedido</option>
+                      <option value="En Producción">En Producción</option>
+                      <option value="Entrega Realizada">Entrega Realizada</option>
+                      <option value="Cotización">Cotización</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-bold mb-1">Estado</label>
+                    <select
+                      value={newEntryForm.estado}
+                      onChange={(e) => setNewEntryForm({ ...newEntryForm, estado: e.target.value as any })}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 focus:outline-none focus:border-amber-400"
+                    >
+                      <option value="Completado">Completado</option>
+                      <option value="En Proceso">En Proceso</option>
+                      <option value="Pendiente">Pendiente</option>
+                      <option value="Entregado">Entregado</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">Notas / Observaciones</label>
+                  <textarea
+                    rows={2}
+                    value={newEntryForm.notas}
+                    onChange={(e) => setNewEntryForm({ ...newEntryForm, notas: e.target.value })}
+                    placeholder="Anticipo del 50% recibido, courier asignado, etc..."
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400"
+                  />
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => setShowNewEntryModal(false)}
+                    className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-xl text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 shadow-md shadow-amber-400/20"
+                  >
+                    Guardar Registro
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         )}
       </div>
     </div>

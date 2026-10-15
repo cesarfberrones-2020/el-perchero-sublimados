@@ -9,7 +9,7 @@ import { Testimonials } from './components/Testimonials';
 import { QuoteForm } from './components/QuoteForm';
 import { FAQ } from './components/FAQ';
 import { Footer } from './components/Footer';
-import { FloatingWhatsApp } from './components/FloatingWhatsApp';
+import { VirtualReceptionistChat } from './components/VirtualReceptionistChat';
 import { ApifyIntegrationModal } from './components/ApifyIntegrationModal';
 import { LegalModal, type LegalTab } from './components/LegalModal';
 import { CookieBanner } from './components/CookieBanner';
@@ -104,8 +104,8 @@ export function App() {
         onOpenAdmin={() => setIsAdminOpen(true)}
       />
 
-      {/* Floating Instant WhatsApp Button */}
-      <FloatingWhatsApp />
+      {/* Floating Virtual Receptionist Assistant & WhatsApp Chat */}
+      <VirtualReceptionistChat onOpenQuoteForm={() => scrollToQuote()} />
 
       {/* Cookie Consent Banner (LOPDP Ecuador) */}
       <CookieBanner
