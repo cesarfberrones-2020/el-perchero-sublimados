@@ -18,9 +18,15 @@ interface FooterProps {
   onOpenLegal?: (tab: LegalTab) => void;
   onOpenCookieSettings?: () => void;
   onOpenAdmin?: () => void;
+  onOpenWhatsAppModal?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenLegal, onOpenCookieSettings, onOpenAdmin }) => {
+export const Footer: React.FC<FooterProps> = ({ 
+  onOpenLegal, 
+  onOpenCookieSettings, 
+  onOpenAdmin,
+  onOpenWhatsAppModal 
+}) => {
   const [subscribed, setSubscribed] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
 
@@ -93,15 +99,15 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLegal, onOpenCookieSetting
                   <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
                 </svg>
               </a>
-              <a
-                href="https://wa.me/593990260253?text=Hola%20El%20Perchero%20Sublimados!%20Quisiera%20informaci%C3%B3n%20sobre%20sus%20productos"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-xl bg-slate-900 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-400 border border-slate-800 hover:border-emerald-500/40 flex items-center justify-center transition-all"
+              <button
+                type="button"
+                onClick={() => onOpenWhatsAppModal ? onOpenWhatsAppModal() : window.open('https://wa.me/593990260253', '_blank')}
+                className="w-10 h-10 rounded-xl bg-slate-900 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-400 border border-slate-800 hover:border-emerald-500/40 flex items-center justify-center transition-all cursor-pointer"
                 aria-label="WhatsApp de El Perchero Sublimados: 0990260253"
+                title="Cotizar por WhatsApp con opciones"
               >
                 <MessageCircle className="w-5 h-5" />
-              </a>
+              </button>
             </div>
           </div>
 
@@ -151,14 +157,13 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLegal, onOpenCookieSetting
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-cyan-400 flex-shrink-0" />
-                <a
-                  href="https://wa.me/593990260253?text=Hola%20El%20Perchero%20Sublimados!%20Quisiera%20cotizar"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-emerald-400 font-semibold transition-colors"
+                <button
+                  type="button"
+                  onClick={() => onOpenWhatsAppModal ? onOpenWhatsAppModal() : window.open('https://wa.me/593990260253', '_blank')}
+                  className="hover:text-emerald-400 font-semibold transition-colors text-left cursor-pointer"
                 >
                   WhatsApp: 0990260253 (+593 99 026 0253)
-                </a>
+                </button>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-purple-400 flex-shrink-0" />

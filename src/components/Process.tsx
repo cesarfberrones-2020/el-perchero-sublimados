@@ -5,9 +5,14 @@ import { PROCESS_STEPS } from '../data/content';
 interface ProcessProps {
   onQuoteClick: () => void;
   onFileUploaded?: (fileData: { fileName: string; previewUrl: string }) => void;
+  onOpenWhatsAppModal?: (initialProduct?: string) => void;
 }
 
-export const Process: React.FC<ProcessProps> = ({ onQuoteClick, onFileUploaded }) => {
+export const Process: React.FC<ProcessProps> = ({ 
+  onQuoteClick, 
+  onFileUploaded,
+  onOpenWhatsAppModal 
+}) => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [uploadedFileName, setUploadedFileName] = useState<string>('');
   const [previewUrl, setPreviewUrl] = useState<string>('');
@@ -221,15 +226,14 @@ export const Process: React.FC<ProcessProps> = ({ onQuoteClick, onFileUploaded }
                             </span>
                           </button>
 
-                          <a
-                            href="https://wa.me/593990260253?text=Hola%20El%20Perchero%20Sublimados!%20Quiero%20enviarles%20mi%20logo%20o%20idea%20para%20cotizar"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full py-2 px-3 rounded-xl text-xs font-semibold text-emerald-400 hover:text-white bg-emerald-500/10 hover:bg-emerald-600 border border-emerald-500/30 flex items-center justify-center gap-1.5 transition-all"
+                          <button
+                            type="button"
+                            onClick={() => onOpenWhatsAppModal ? onOpenWhatsAppModal('Consulta con Logo') : window.open('https://wa.me/593990260253', '_blank')}
+                            className="w-full py-2.5 px-3 rounded-xl text-xs font-semibold text-emerald-400 hover:text-white bg-emerald-500/10 hover:bg-emerald-600 border border-emerald-500/30 flex items-center justify-center gap-1.5 transition-all shadow-sm"
                           >
                             <MessageCircle className="w-3.5 h-3.5" />
-                            <span>O envíalo directo al WhatsApp: 0990260253</span>
-                          </a>
+                            <span>💬 Cotizar por WhatsApp (Tazas, Chompas, Vasos...)</span>
+                          </button>
                         </div>
                       )}
                     </div>
@@ -320,15 +324,14 @@ export const Process: React.FC<ProcessProps> = ({ onQuoteClick, onFileUploaded }
                   <UploadCloud className="w-4 h-4" />
                   <span>Subir mi Logo / Diseño Ahora</span>
                 </button>
-                <a
-                  href="https://wa.me/593990260253?text=Hola%20El%20Perchero%20Sublimados!%20Quiero%20enviar%20mi%20dise%C3%B1o%20para%20cotizar"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-5 py-3 rounded-xl font-bold text-sm text-emerald-300 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 flex items-center justify-center gap-2 transition-all"
+                <button
+                  type="button"
+                  onClick={() => onOpenWhatsAppModal ? onOpenWhatsAppModal('Sublimación General') : window.open('https://wa.me/593990260253', '_blank')}
+                  className="px-5 py-3 rounded-xl font-bold text-sm text-emerald-300 hover:text-emerald-200 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/10 cursor-pointer"
                 >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>WhatsApp: 0990260253</span>
-                </a>
+                  <MessageCircle className="w-4 h-4 text-emerald-400" />
+                  <span>Cotizar por WhatsApp (0990260253)</span>
+                </button>
               </div>
             </div>
 

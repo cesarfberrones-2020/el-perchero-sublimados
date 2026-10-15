@@ -18,17 +18,22 @@ interface Message {
   actionButton?: {
     label: string;
     url?: string;
-    actionType?: 'whatsapp' | 'quote_form';
+    actionType?: 'whatsapp' | 'quote_form' | 'open_whatsapp_modal';
     whatsappText?: string;
+    productName?: string;
   };
   chips?: string[];
 }
 
 interface VirtualReceptionistChatProps {
   onOpenQuoteForm?: () => void;
+  onOpenWhatsAppModal?: (productName?: string) => void;
 }
 
-export const VirtualReceptionistChat: React.FC<VirtualReceptionistChatProps> = ({ onOpenQuoteForm }) => {
+export const VirtualReceptionistChat: React.FC<VirtualReceptionistChatProps> = ({ 
+  onOpenQuoteForm,
+  onOpenWhatsAppModal 
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hasUnread, setHasUnread] = useState(true);
   const [inputValue, setInputValue] = useState('');
@@ -38,16 +43,16 @@ export const VirtualReceptionistChat: React.FC<VirtualReceptionistChatProps> = (
   const initialGreeting: Message = {
     id: 'msg-init-1',
     sender: 'bot',
-    text: '¡Hola! 👋 Te doy la bienvenida a El Perchero Sublimados. Soy tu recepcionista virtual.\n\n¿En qué te puedo asesorar hoy? Recuerda que manejamos precios especiales al por mayor a partir de 1 docena (12 unidades).',
+    text: '¡Hola! 👋 Te doy la bienvenida a El Perchero Sublimados. Soy tu recepcionista virtual.\n\n¿Qué producto te interesa personalizar hoy? Puedes seleccionar una opción para armar tu cotización oficial de WhatsApp con precios por mayor desde 1 docena.',
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     chips: [
-      '🏷️ Precios al por mayor',
-      '📦 ¿Cuál es el pedido mínimo?',
+      '🧥 Chompas & Hoodies ($15)',
+      '☕ Tazas Cerámicas ($3.50)',
+      '🍶 Vasos Térmicos ($8-$10)',
       '🧢 Gorras ($5 c/u)',
-      '👕 Camisetas ($10) & Hoodies ($15)',
-      '☕ Tazas ($3.50) & Termos ($10)',
-      '🏢 Sublimación Corporativa',
-      '💬 Hablar con asesor por WhatsApp',
+      '👕 Camisetas ($10)',
+      '🏢 Merch Corporativo',
+      '🎯 Personalizar pedido en WhatsApp',
     ],
   };
 
@@ -68,7 +73,89 @@ export const VirtualReceptionistChat: React.FC<VirtualReceptionistChatProps> = (
     const input = userInput.toLowerCase();
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    // 1. Wholesale Prices
+    // 0. Configurar / Personalizar Pedido en WhatsApp (interactive modal)
+    if (input.includes('personalizar') || input.includes('armar') || input.includes('opcion') || input.includes('elegir')) {
+      return {
+        id: 'bot-' + Date.now(),
+        sender: 'bot',
+        text: '🎯 *Cotizador Express por WhatsApp:*\n\n' +
+          '¡Perfecto! Hemos preparado un configurador interactivo para que elijas entre **Chompas, Tazas, Vasos, Gorras, Camisetas o Merch Corporativo**, indiques la cantidad de docenas y lleves los datos estructurados directo a WhatsApp.',
+        timestamp: time,
+        actionButton: {
+          label: '✨ Abrir Selector de Productos para WhatsApp',
+          actionType: 'open_whatsapp_modal',
+          productName: '',
+        },
+        chips: ['🧥 Chompas ($15)', '☕ Tazas ($3.50)', '🍶 Vasos Térmicos', '🧢 Gorras ($5)'],
+      };
+    }
+
+    // 1. Chompas & Hoodies (User explicitly requested!)
+    if (input.includes('chompa') || input.includes('hoodie') || input.includes('buzo') || input.includes('chompas')) {
+      return {
+        id: 'bot-' + Date.now(),
+        sender: 'bot',
+        text: '🧥 *Chompas & Hoodies Afelpados El Perchero:*\n\n' +
+          '• **Precio por mayor:** Desde $15.00 c/u (a partir de 1 docena = 12 unidades = $180 total).\n' +
+          '• **Confección:** Algodón perchado térmico de alto gramaje, bolsillo canguro, capucha forrada y cordones con puntas metálicas.\n' +
+          '• **Tallas:** S, M, L, XL combinables dentro de tu pedido.\n' +
+          '• **Técnicas de Estampado:** DTF textil de máxima definición, parches sublimados HD o vinil termo-transferible de larga duración.\n' +
+          '• **Ideal para:** Marcas streetwear, promociones estudiantiles, uniformes y grupos.',
+        timestamp: time,
+        actionButton: {
+          label: '🧥 Cotizar Chompas / Hoodies en WhatsApp',
+          actionType: 'open_whatsapp_modal',
+          productName: 'Chompas & Hoodies',
+          whatsappText: 'Chompas & Hoodies',
+        },
+        chips: ['☕ Tazas ($3.50)', '🍶 Vasos Térmicos', '🧢 Gorras ($5)', '👕 Camisetas ($10)'],
+      };
+    }
+
+    // 2. Tazas Cerámicas (User explicitly requested!)
+    if (input.includes('taza') || input.includes('mug') || input.includes('tazas')) {
+      return {
+        id: 'bot-' + Date.now(),
+        sender: 'bot',
+        text: '☕ *Tazas Cerámicas & Mugs HD El Perchero:*\n\n' +
+          '• **Precio por mayor:** Desde $3.50 c/u (desde la docena = 12 unidades = $42 total).\n' +
+          '• **Modelos:** Tazas blancas clásicas 11 oz grado AAA, tazas mágicas termosensibles (revelan diseño con agua caliente), asa e interior de color.\n' +
+          '• **Calidad:** Cerámica brillante apta para microondas y lavavajillas sin desgaste de color.\n' +
+          '• **Empaque:** Opcional caja individual para souvenir o regalo institucional.',
+        timestamp: time,
+        actionButton: {
+          label: '☕ Cotizar Tazas Cerámicas en WhatsApp',
+          actionType: 'open_whatsapp_modal',
+          productName: 'Tazas Cerámicas & Mugs',
+          whatsappText: 'Tazas Cerámicas & Mugs',
+        },
+        chips: ['🍶 Vasos & Termos', '🧥 Chompas ($15)', '🧢 Gorras ($5)', '📦 Pedido Mínimo'],
+      };
+    }
+
+    // 3. Vasos Térmicos & Termos (User explicitly requested!)
+    if (input.includes('vaso') || input.includes('termo') || input.includes('tomatodo') || input.includes('vasos') || input.includes('termos')) {
+      return {
+        id: 'bot-' + Date.now(),
+        sender: 'bot',
+        text: '🍶 *Vasos Térmicos, Termos & Tomatodos Metálicos:*\n\n' +
+          '• **Precio por mayor:** Desde $8.00 a $10.00 c/u (desde 1 docena = 12 unidades).\n' +
+          '• **Material:** Acero inoxidable de doble pared térmica al vacío, libre de BPA.\n' +
+          '• **Rendimiento:** Conserva bebidas frías hasta 12 horas y calientes hasta 8 horas.\n' +
+          '• **Personalización:** Grabado láser fino de alta fidelidad o sublimación cilíndrica a todo color.\n' +
+          '• **Ideal para:** Merchandising ejecutivo, eventos deportivos y regalos de alta gama.',
+        timestamp: time,
+        actionButton: {
+          label: '🍶 Cotizar Vasos y Termos en WhatsApp',
+          actionType: 'open_whatsapp_modal',
+          productName: 'Vasos Térmicos & Termos',
+          whatsappText: 'Vasos Térmicos & Termos',
+        },
+        chips: ['☕ Tazas ($3.50)', '🧥 Chompas ($15)', '🏢 Merch Corporativo', '🧢 Gorras ($5)'],
+      };
+    }
+
+    // 4. Wholesale Prices General
     if (input.includes('precio') || input.includes('por mayor') || input.includes('cuanto') || input.includes('costo') || input.includes('tarifa')) {
       return {
         id: 'bot-' + Date.now(),
@@ -76,18 +163,18 @@ export const VirtualReceptionistChat: React.FC<VirtualReceptionistChatProps> = (
         text: '📋 *Lista de Precios al por Mayor (a partir de la docena - USD Ecuador):*\n\n' +
           '• 🧢 *Gorras Personalizadas:* $5.00 c/u (desde 1 docena)\n' +
           '• 👕 *Camisetas de Alta Pinta:* desde $10.00 c/u\n' +
-          '• 🧥 *Hoodies & Buzos:* desde $15.00 c/u\n' +
+          '• 🧥 *Chompas & Hoodies:* desde $15.00 c/u\n' +
           '• ☕ *Tazas Cerámica HD:* desde $3.50 c/u\n' +
-          '• 🍶 *Termos Metálicos:* desde $10.00 c/u\n' +
+          '• 🍶 *Vasos Térmicos & Termos:* desde $8.00 / $10.00 c/u\n' +
           '• 🏢 *Merch Corporativo:* Precio según volumen por interno.\n\n' +
-          '⚡ Todos los precios aplican a partir de 1 docena (12 unidades). ¿Deseas armar tu pedido o maqueta previa?',
+          '⚡ Todos los precios aplican a partir de 1 docena (12 unidades). ¿Cuál deseas cotizar?',
         timestamp: time,
         actionButton: {
-          label: '📲 Enviar este pedido a WhatsApp (0990260253)',
-          actionType: 'whatsapp',
-          whatsappText: '¡Hola El Perchero! 👋 Vi la lista de precios al por mayor y deseo cotizar un pedido desde 1 docena.',
+          label: '🎯 Armar Pedido WhatsApp con Opciones',
+          actionType: 'open_whatsapp_modal',
+          productName: '',
         },
-        chips: ['🧢 Gorras ($5)', '👕 Camisetas ($10)', '☕ Tazas ($3.50)', '📝 Llenar Formulario de Cotización'],
+        chips: ['🧥 Chompas ($15)', '☕ Tazas ($3.50)', '🍶 Vasos Térmicos', '🧢 Gorras ($5)', '👕 Camisetas ($10)'],
       };
     }
 
@@ -278,6 +365,14 @@ export const VirtualReceptionistChat: React.FC<VirtualReceptionistChatProps> = (
         const el = document.getElementById('cotizar');
         el?.scrollIntoView({ behavior: 'smooth' });
       }
+    } else if (msg.actionButton.actionType === 'open_whatsapp_modal') {
+      setIsOpen(false);
+      if (onOpenWhatsAppModal) {
+        onOpenWhatsAppModal(msg.actionButton.productName || msg.actionButton.whatsappText || '');
+      } else {
+        const text = encodeURIComponent(msg.actionButton.whatsappText || '¡Hola El Perchero Sublimados! Quisiera cotizar.');
+        window.open(`https://wa.me/593990260253?text=${text}`, '_blank');
+      }
     } else if (msg.actionButton.actionType === 'whatsapp') {
       const text = encodeURIComponent(msg.actionButton.whatsappText || '¡Hola El Perchero Sublimados! Quisiera cotizar.');
       window.open(`https://wa.me/593990260253?text=${text}`, '_blank');
@@ -367,15 +462,21 @@ export const VirtualReceptionistChat: React.FC<VirtualReceptionistChatProps> = (
             </div>
 
             <div className="flex items-center gap-1">
-              <a
-                href="https://wa.me/593990260253?text=Hola%20El%20Perchero!%20Vengo%20desde%20la%20p%C3%A1gina%20web"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() => {
+                  setIsOpen(false);
+                  if (onOpenWhatsAppModal) {
+                    onOpenWhatsAppModal();
+                  } else {
+                    window.open('https://wa.me/593990260253?text=Hola%20El%20Perchero!%20Vengo%20desde%20la%20p%C3%A1gina%20web', '_blank');
+                  }
+                }}
                 className="p-1.5 rounded-lg text-emerald-400 hover:bg-slate-800 transition-colors"
-                title="Abrir WhatsApp directo (0990260253)"
+                title="Abrir cotizador de WhatsApp (0990260253)"
               >
                 <MessageCircle className="w-4 h-4" />
-              </a>
+              </button>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}

@@ -10,6 +10,7 @@ import { QuoteForm } from './components/QuoteForm';
 import { FAQ } from './components/FAQ';
 import { Footer } from './components/Footer';
 import { VirtualReceptionistChat } from './components/VirtualReceptionistChat';
+import { WhatsAppQuoteModal } from './components/WhatsAppQuoteModal';
 import { ApifyIntegrationModal } from './components/ApifyIntegrationModal';
 import { LegalModal, type LegalTab } from './components/LegalModal';
 import { CookieBanner } from './components/CookieBanner';
@@ -30,6 +31,17 @@ export function App() {
     tab: 'privacy',
   });
   const [forceCookieSettings, setForceCookieSettings] = useState<boolean>(false);
+  const [whatsAppModalState, setWhatsAppModalState] = useState<{
+    isOpen: boolean;
+    initialProduct?: string;
+  }>({
+    isOpen: false,
+    initialProduct: '',
+  });
+
+  const openWhatsAppModal = (initialProduct?: string) => {
+    setWhatsAppModalState({ isOpen: true, initialProduct: initialProduct || '' });
+  };
 
   const openLegalModal = (tab: LegalTab) => {
     setLegalModalState({ isOpen: true, tab });
@@ -65,6 +77,7 @@ export function App() {
         <Hero
           onQuoteClick={() => scrollToQuote()}
           onExploreClick={scrollToProducts}
+          onOpenWhatsAppModal={openWhatsAppModal}
         />
 
         {/* Featured Products Grid */}
@@ -77,6 +90,7 @@ export function App() {
         <Process
           onQuoteClick={() => scrollToQuote()}
           onFileUploaded={(data) => setUploadedDesign(data)}
+          onOpenWhatsAppModal={openWhatsAppModal}
         />
 
         {/* Differentials / Value Proposition */}
@@ -102,10 +116,21 @@ export function App() {
         onOpenLegal={(tab) => openLegalModal(tab)}
         onOpenCookieSettings={() => setForceCookieSettings(true)}
         onOpenAdmin={() => setIsAdminOpen(true)}
+        onOpenWhatsAppModal={() => openWhatsAppModal()}
       />
 
       {/* Floating Virtual Receptionist Assistant & WhatsApp Chat */}
-      <VirtualReceptionistChat onOpenQuoteForm={() => scrollToQuote()} />
+      <VirtualReceptionistChat 
+        onOpenQuoteForm={() => scrollToQuote()} 
+        onOpenWhatsAppModal={openWhatsAppModal}
+      />
+
+      {/* Interactive WhatsApp Lead Qualification Modal (CRO Funnel) */}
+      <WhatsAppQuoteModal
+        isOpen={whatsAppModalState.isOpen}
+        onClose={() => setWhatsAppModalState((prev) => ({ ...prev, isOpen: false }))}
+        initialProduct={whatsAppModalState.initialProduct}
+      />
 
       {/* Cookie Consent Banner (LOPDP Ecuador) */}
       <CookieBanner
@@ -127,6 +152,7 @@ export function App() {
         product={selectedProductForModal}
         onClose={() => setSelectedProductForModal(null)}
         onSelectForQuote={(name) => scrollToQuote(name)}
+        onOpenWhatsAppModal={openWhatsAppModal}
       />
 
       {/* Admin Dashboard & Supabase Manager */}

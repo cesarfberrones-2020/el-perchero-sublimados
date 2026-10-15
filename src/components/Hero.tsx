@@ -1,12 +1,13 @@
 import React from 'react';
-import { Sparkles, ArrowRight, ShieldCheck, Flame, Star, Award, CheckCircle2 } from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck, Flame, Star, Award, CheckCircle2, MessageCircle } from 'lucide-react';
 
 interface HeroProps {
   onQuoteClick: () => void;
   onExploreClick: () => void;
+  onOpenWhatsAppModal?: (productName?: string) => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onQuoteClick, onExploreClick }) => {
+export const Hero: React.FC<HeroProps> = ({ onQuoteClick, onExploreClick, onOpenWhatsAppModal }) => {
   return (
     <section className="relative pt-6 pb-20 md:py-24 overflow-hidden bg-radial-gradient">
       {/* Decorative ambient blurred blobs */}
@@ -62,10 +63,10 @@ export const Hero: React.FC<HeroProps> = ({ onQuoteClick, onExploreClick }) => {
             </div>
 
             {/* CTAs */}
-            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5">
               <button
                 onClick={onQuoteClick}
-                className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold text-base text-white bg-gradient-to-r from-rose-500 via-rose-600 to-fuchsia-600 hover:from-rose-600 hover:to-cyan-600 shadow-xl shadow-rose-500/30 hover:shadow-cyan-500/25 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-rose-400"
+                className="w-full sm:w-auto px-7 py-4 rounded-xl font-bold text-base text-white bg-gradient-to-r from-rose-500 via-rose-600 to-fuchsia-600 hover:from-rose-600 hover:to-cyan-600 shadow-xl shadow-rose-500/30 hover:shadow-cyan-500/25 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-rose-400 cursor-pointer"
               >
                 <Sparkles className="w-5 h-5 text-rose-200 group-hover:rotate-12 transition-transform" />
                 <span>Cotiza tu diseño ahora</span>
@@ -73,10 +74,20 @@ export const Hero: React.FC<HeroProps> = ({ onQuoteClick, onExploreClick }) => {
               </button>
 
               <button
-                onClick={onExploreClick}
-                className="w-full sm:w-auto px-6 py-4 rounded-xl font-semibold text-base text-slate-200 hover:text-white bg-slate-900/80 hover:bg-slate-800/90 border border-slate-700/80 hover:border-slate-600 transition-all duration-300 flex items-center justify-center gap-2"
+                type="button"
+                onClick={() => onOpenWhatsAppModal ? onOpenWhatsAppModal('') : window.open('https://wa.me/593990260253', '_blank')}
+                className="w-full sm:w-auto px-6 py-4 rounded-xl font-bold text-sm text-emerald-300 hover:text-emerald-200 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/10 cursor-pointer"
+                title="Cotizar de inmediato por WhatsApp con opciones"
               >
-                <span>Explorar Catálogo</span>
+                <MessageCircle className="w-5 h-5 text-emerald-400" />
+                <span>Cotizar x WhatsApp</span>
+              </button>
+
+              <button
+                onClick={onExploreClick}
+                className="w-full sm:w-auto px-5 py-4 rounded-xl font-semibold text-sm text-slate-300 hover:text-white bg-slate-900/80 hover:bg-slate-800/90 border border-slate-700/80 hover:border-slate-600 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>Catálogo</span>
               </button>
             </div>
 

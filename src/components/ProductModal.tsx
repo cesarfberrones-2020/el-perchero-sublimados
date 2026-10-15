@@ -1,17 +1,19 @@
 import React from 'react';
-import { X, Check, ArrowRight, ShieldCheck, Tag, Sparkles } from 'lucide-react';
+import { X, Check, ArrowRight, ShieldCheck, Tag, Sparkles, MessageCircle } from 'lucide-react';
 import type { ProductItem } from '../types';
 
 interface ProductModalProps {
   product: ProductItem | null;
   onClose: () => void;
   onSelectForQuote: (productName: string) => void;
+  onOpenWhatsAppModal?: (productName: string) => void;
 }
 
 export const ProductModal: React.FC<ProductModalProps> = ({
   product,
   onClose,
   onSelectForQuote,
+  onOpenWhatsAppModal,
 }) => {
   if (!product) return null;
 
@@ -139,17 +141,37 @@ export const ProductModal: React.FC<ProductModalProps> = ({
               <span>Garantía de color y prueba digital previa</span>
             </div>
 
-            <button
-              onClick={() => {
-                onSelectForQuote(product.name);
-                onClose();
-              }}
-              className="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-rose-500 to-cyan-500 hover:from-rose-600 hover:to-cyan-600 shadow-lg shadow-rose-500/25 flex items-center justify-center gap-2 transition-all"
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>Cotizar {product.name}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  if (onOpenWhatsAppModal) {
+                    onOpenWhatsAppModal(product.name);
+                  } else {
+                    window.open(`https://wa.me/593990260253?text=${encodeURIComponent(`¡Hola! Deseo cotizar ${product.name} al por mayor.`)}`, '_blank');
+                  }
+                }}
+                className="w-full sm:w-auto px-5 py-3 rounded-xl font-bold text-sm text-emerald-300 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/10 cursor-pointer"
+                title="Cotizar este producto por WhatsApp con opciones"
+              >
+                <MessageCircle className="w-4 h-4 text-emerald-400" />
+                <span>Cotizar x WhatsApp</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  onSelectForQuote(product.name);
+                  onClose();
+                }}
+                className="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-rose-500 to-cyan-500 hover:from-rose-600 hover:to-cyan-600 shadow-lg shadow-rose-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Llenar Formulario</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
